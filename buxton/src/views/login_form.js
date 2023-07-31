@@ -59,7 +59,7 @@ const LoginForm = {
           m('col-2',
             m('button.btn.btn-primary',
               {'data-toggle': 'modal', 'data-target': '#modal'},
-              'Entrar')))))
+              'Login')))))
     ])
   }
 }

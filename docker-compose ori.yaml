@@ -112,12 +112,12 @@ services:
       - VALIDATOR_URL=tcp://validator:4004
       - DB_HOST=rethink
 
-  fish-client:
-    image: supply-fish-client
-    container_name: supply-fish-client
-    build: 
-      context: .
-      dockerfile: fish_client/Dockerfile-installed
+  buxton:
+    image: supply-buxton-client
+    container_name: supply-buxton-client
+    build: ./buxton
+    volumes:
+      - ./buxton/public/:/usr/local/apache2/htdocs/
     expose:
       - 80
     ports:

@@ -50,25 +50,25 @@ const Layout = {
 
 const loggedInNav = () => {
   const links = [
-    ['/create', 'Añadir Vino'],
-    ['/fish', 'Ver Vino'],
-    ['/agents', 'Ver Administrador']
+    ['/create', 'Tambahkan Beras'],
+    ['/fish', 'Beras'],
+    ['/agents', 'Administrator']
   ]
   return m(navigation.Navbar, {}, [
     navigation.links(links),
-    navigation.link('/profile', 'Profile'),
-    navigation.button('/logout', 'Logout')
+    navigation.link('/profile', 'Profil'),
+    navigation.button('/logout', 'Keluar')
   ])
 }
 
 const loggedOutNav = () => {
   const links = [
-    ['/fish', 'Ver Vino'],
-    ['/agents', 'Ver Distribuidor']
+    ['/fish', 'Beras'],
+    ['/agents', 'Distributor']
   ]
   return m(navigation.Navbar, {}, [
     navigation.links(links),
-    navigation.button('/login', 'Entrar')
+    navigation.button('/login', 'Masuk')
   ])
 }
 

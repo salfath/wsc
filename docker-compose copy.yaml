@@ -116,8 +116,10 @@ services:
     image: supply-fish-client
     container_name: supply-fish-client
     build: 
-      context: .
-      dockerfile: fish_client/Dockerfile-installed
+      context: ./fish_client
+      dockerfile: Dockerfile-installed
+    volumes:
+      - ./fish_client/public/:/usr/local/apache2/htdocs/
     expose:
       - 80
     ports:

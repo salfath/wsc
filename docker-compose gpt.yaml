@@ -116,12 +116,12 @@ services:
     image: supply-fish-client
     container_name: supply-fish-client
     build: 
-      context: .
-      dockerfile: fish_client/Dockerfile-installed
-    expose:
-      - 80
+      context: ./fish_client
+      dockerfile: Dockerfile-dev
+    volumes:
+      - .:/usr/src/app
     ports:
-      - '8022:80'
+      - 3000:3000
     depends_on:
       - server
 

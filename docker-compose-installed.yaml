@@ -73,12 +73,12 @@ services:
       - DB_HOST=rethink
 
 
-  buxton:
-    image: supply-buxton-client-installed
-    container_name: supply-buxton-client-installed
+  fish-client:
+    image: supply-fish-client-installed
+    container_name: supply-fish-client-installed
     build:
       context: .
-      dockerfile: buxton/Dockerfile-installed
+      dockerfile: fish_client/Dockerfile-installed
     expose:
       - 80
     ports:

@@ -14,46 +14,33 @@
  * limitations under the License.
  * ----------------------------------------------------------------------------
  */
-'use strict'
+'use strict';
 
-const m = require('mithril')
+const m = require('mithril');
+
+const text = {
+  welcome: 'Selamat datang di',
+  berasnet: 'BerasNet',
+  blurb1: ' dibangun menggunakan teknologi blockchain Hyperledger Sawtooth untuk melacak rantai pasok beras mulai dari asal-usul, ' +
+    'penyimpanan, pengangkutan dan penjualan beras dari petani sampai konsumen.',
+  startBlurb: 'Untuk menggunakan BerasNet, buat akun dengan mengklik tombol Masuk di bilah navigasi atas. ' +
+    'Setelah masuk, Anda dapat menambahkan produk beras ke blockchain, melacak lokasi terkini dan riwayat perpindahan kepemilikannya. ' +
+    'Selain itu, Anda dapat memberi izin kepada pengelola lain di blockchain untuk melacak dan mengalihkan kepemilikan beras tersebut kepada pihak lain dalam rantai pasok.'
+};
 
 const Dashboard = {
   view (vnode) {
     return [
       m('.header.text-center.mb-4',
-
-        m('h4', 'Bienvenido a'),
-        m('h1.mb-3', 'Buxton'),
-        m('h5',
-          m('em',
-            'Powered by ',
-            m('strong', 'Sawtooth Supply Chain')))),
+        m('h4', text.welcome),
+        m('h1.mb-3', text.berasnet)),
       m('.blurb',
-        m('p',
-          m('strong', 'Buxton'),
-          ' ha sido creado con Hyperledger Sawtooth',
-          m('a[href="https://github.com/hyperledger/sawtooth-core"]',
-            { target: '_blank' }),
-          ' La tecnologia blockchain mantiene un ledger distribuido  ',
-          'que traza la provenencia y la marca de tiempo sobre teléfonos y vino ',
-          ' (los dos productos utilizados en este prototipo). ' +
-            'Detallando como el producto ha sido guardado, administrado y transportado.'),
-        m('p',
-          m('strong', 'Buxton'),
-          ' es un prototipo desarrola por Carlos Roldan que utiliza blockchain para supply chain. ' +
-            'El propósito de este prototipo es mostrar un mínimo de experiencia y comodidad usando Hyperledger Sawtooth.'),
-          m('h2', 'Empieza'),
-          m('p', 'Para utilizar ',
-          m('strong', 'Buxton'),
-          ', crea una cuenta en el botón entrar the la barra de navegación de arriba. ',
-              'Una vez identificado, podras regisrar un producto ',
-              'en la blockchain y tracearlo con datos del producto, tales como su tamaño, peso or localización',
-          '. Además, podrás autorizar otros "administradores" en la blockchain con ',
-          'permisos para tracear los productos, o incluso transferir el derecho',
-              ' de propiedad o posesión de dichos productos. '))
-    ]
+        m('p.text-justify',
+          m('strong', text.berasnet), text.blurb1),
+        m('p.text-justify', text.startBlurb)
+      )
+    ];
   }
-}
+};
 
-module.exports = Dashboard
+module.exports = Dashboard;

@@ -117,11 +117,13 @@ services:
     container_name: supply-fish-client
     build: 
       context: .
-      dockerfile: fish_client/Dockerfile-installed
-    expose:
-      - 80
+      dockerfile: fish_client/Dockerfile.dev
+    volumes:
+      - ./fish_client:/supply_chain/fish_client
+      - /supply_chain/fish_client/node_modules
     ports:
-      - '8022:80'
+      - 8080:8080
+      - 8081:8081
     depends_on:
       - server
 

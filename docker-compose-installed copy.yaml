@@ -17,72 +17,31 @@ version: '2.1'
 
 services:
 
-  shell:
-    image: supply-shell
-    container_name: supply-shell
+  processor:
+    image: supply-tp-installed
+    container_name: supply-tp-installed
     build:
       context: .
-      dockerfile: shell/Dockerfile
-    volumes:
-      - .:/sawtooth-supply-chain
-      - /sawtooth-supply-chain/asset_client/node_modules
-      - /sawtooth-supply-chain/fish_client/node_modules
-      - /sawtooth-supply-chain/server/node_modules
-    depends_on:
-      - rethink
-      - rest-api
-    environment:
-      - VALIDATOR_URL=tcp://validator:4004
-      - DB_HOST=rethink
-      - SERVER=http://server:3000
-    command: |
-      bash -c "
-        protogen &&
-        cd asset_client/ && npm run build && cd - &&
-        cd fish_client/ && npm run build && cd - &&
-        if [ ! -f /root/.sawtooth/keys/root.priv ]; then
-          sawtooth keygen &&
-          cd server/ &&
-          npm run init &&
-          npm run make-asset &&
-          npm run make-fish &&
-          npm run seed-sample-assets &&
-          npm run seed-sample-fish &&
-          cd -
-        fi;
-        tail -f /dev/null
-      "
-
-  processor:
-    image: supply-tp
-    container_name: supply-tp
-    build:
-      context: processor/
+      dockerfile: processor/Dockerfile-installed
       args:
         - http_proxy
         - https_proxy
         - no_proxy
-    volumes:
-      - .:/sawtooth-supply-chain
     depends_on:
-      - shell
       - validator
     entrypoint: |
       /sawtooth-supply-chain/bin/supply_chain_tp -vv tcp://validator:4004
 
   server:
-    image: supply-server
-    container_name: supply-server
+    image: supply-server-installed
+    container_name: supply-server-installed
     build:
       context: .
-      dockerfile: server/Dockerfile
+      dockerfile: server/Dockerfile-installed
       args:
         - http_proxy
         - https_proxy
         - no_proxy
-    volumes:
-      - .:/sawtooth-supply-chain
-      - /sawtooth-supply-chain/server/node_modules
     expose:
       - 3000
     ports:
@@ -90,21 +49,22 @@ services:
     depends_on:
       - validator
       - rethink
-      - shell
     environment:
       - VALIDATOR_URL=tcp://validator:4004
       - DB_HOST=rethink
-    entrypoint: node index.js
+    command: |
+      bash -c "
+        set -x &&
+        npm run init &&
+        node index.js
+      "
 
   ledger-sync:
-    image: supply-ledger-sync
-    container_name: supply-ledger-sync
+    image: supply-ledger-sync-installed
+    container_name: supply-ledger-sync-installed
     build:
       context: .
-      dockerfile: ledger_sync/Dockerfile
-    volumes:
-      - .:/sawtooth-supply-chain
-      - /sawtooth-supply-chain/ledger_sync/node_modules
+      dockerfile: ledger_sync/Dockerfile-installed
     depends_on:
       - validator
       - rethink
@@ -112,12 +72,13 @@ services:
       - VALIDATOR_URL=tcp://validator:4004
       - DB_HOST=rethink
 
-  fish-client:
-    image: supply-fish-client
-    container_name: supply-fish-client
-    build: 
+
+  buxton:
+    image: supply-buxton-client-installed
+    container_name: supply-buxton-client-installed
+    build:
       context: .
-      dockerfile: fish_client/Dockerfile-installed
+      dockerfile: buxton/Dockerfile-installed
     expose:
       - 80
     ports:
@@ -131,17 +92,12 @@ services:
     expose:
       - 8080
       - 28015
-    ports:
-      - '8023:8080'
-      - '28020:28015'
 
   validator:
     image: hyperledger/sawtooth-validator:1.0
     container_name: supply-validator
     expose:
       - 4004
-    ports:
-      - '4020:4004'
     # start the validator with an empty genesis batch
     entrypoint: |
       bash -c "
@@ -151,7 +107,7 @@ services:
           sawset genesis -k /root/.sawtooth/keys/my_key.priv &&
           sawadm genesis config-genesis.batch
         fi;
-        sawtooth-validator -vv \
+        sawtooth-validator -v \
           --endpoint tcp://validator:8800 \
           --bind component:tcp://eth0:4004 \
           --bind network:tcp://eth0:8800
@@ -162,18 +118,4 @@ services:
     container_name: supply-settings-tp
     depends_on:
       - validator
-    entrypoint: settings-tp -vv -C tcp://validator:4004
-
-  rest-api:
-    image: hyperledger/sawtooth-rest-api:1.0
-    container_name: supply-rest-api
-    expose:
-      - 8008
-    ports:
-      - '8024:8008'
-    depends_on:
-      - validator
-    entrypoint: |
-      sawtooth-rest-api -vv
-        --connect tcp://validator:4004
-        --bind rest-api:8008
+    entrypoint: settings-tp -v -C tcp://validator:4004

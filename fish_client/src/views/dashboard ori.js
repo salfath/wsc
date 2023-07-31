@@ -43,7 +43,7 @@ const Dashboard = {
           m('strong', 'Buxton'),
           ' es un prototipo desarrola por Carlos Roldan que utiliza blockchain para supply chain. ' +
             'El propósito de este prototipo es mostrar un mínimo de experiencia y comodidad usando Hyperledger Sawtooth.'),
-          m('h2', 'Getting Started'),
+          m('h2', 'Mulai'),
           m('p', 'Para utilizar ',
           m('strong', 'Buxton'),
           ', crea una cuenta en el botón entrar the la barra de navegación de arriba. ',

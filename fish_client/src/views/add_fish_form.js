@@ -61,15 +61,15 @@ const AddFishForm = {
                  _handleSubmit(vnode.attrs.signingKey, vnode.state)
                }
              },
-             m('legend', 'Añadir Vino'),
-             _formGroup('Número de serie', m('input.form-control', {
+             m('legend', 'Tambahkan Beras'),
+             _formGroup('Nomor seri', m('input.form-control', {
                type: 'text',
                oninput: m.withAttr('value', (value) => {
                  vnode.state.serialNumber = value
                }),
                value: vnode.state.serialNumber
              })),
-             _formGroup('Variedad (3 letras)', m('input.form-control', {
+             _formGroup('Variasi (3 huruf)', m('input.form-control', {
                type: 'text',
                oninput: m.withAttr('value', (value) => {
                  vnode.state.species = value
@@ -78,7 +78,7 @@ const AddFishForm = {
              })),
 
              layout.row([
-               _formGroup('Temperatura (ºC)', m('input.form-control', {
+               _formGroup('Suhu (ºC)', m('input.form-control', {
                  type: 'number',
                  min: 0,
                  step: 'any',
@@ -87,7 +87,7 @@ const AddFishForm = {
                  }),
                  value: vnode.state.lengthInCM
                })),
-               _formGroup('Peso (kg)', m('input.form-control', {
+               _formGroup('Berat (kg)', m('input.form-control', {
                  type: 'number',
                  step: 'any',
                  oninput: m.withAttr('value', (value) => {
@@ -98,7 +98,7 @@ const AddFishForm = {
              ]),
 
              layout.row([
-               _formGroup('Latitud', m('input.form-control', {
+               _formGroup('Garis Lintang', m('input.form-control', {
                  type: 'number',
                  step: 'any',
                  min: -90,
@@ -108,7 +108,7 @@ const AddFishForm = {
                  }),
                  value: vnode.state.latitude
                })),
-               _formGroup('Longitud', m('input.form-control', {
+               _formGroup('Garis Bujur', m('input.form-control', {
                  type: 'number',
                  step: 'any',
                  min: -180,
@@ -128,7 +128,7 @@ const AddFishForm = {
                    m('.col-sm-8',
                      m('input.form-control', {
                        type: 'text',
-                       placeholder: 'Añade administrador por nombre or public key...',
+                       placeholder: 'Tambahkan administrator berdasarkan nama atau kunci publik...',
                        oninput: m.withAttr('value', (value) => {
                          // clear any previously matched values
                          vnode.state.reporters[i].reporterKey = null
@@ -144,7 +144,7 @@ const AddFishForm = {
 
                    m('.col-sm-4',
                      m(MultiSelect, {
-                       label: 'Selecciona Permisos',
+                       label: 'Pilih izin',
                        options: authorizableProperties,
                        selected: reporter.properties,
                        onchange: (selection) => {

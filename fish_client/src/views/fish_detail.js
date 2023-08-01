@@ -36,8 +36,8 @@ const {
  * Possible selection options
  */
 const authorizableProperties = [
-  ['location', 'Location'],
-  ['temperature', 'Temperature'],
+  ['location', 'Lokasi'],
+  ['temperature', 'Suhu'],
   ['tilt', 'Tilt'],
   ['shock', 'Shock']
 ]
@@ -182,7 +182,7 @@ const ReporterControl = {
                     .then(onsuccess)
                 }
               },
-              'Quitar permiso'))
+              'Hapus izin'))
           ]
         }),
 
@@ -200,7 +200,7 @@ const ReporterControl = {
                       .then(onsuccess)
                   }
                 },
-                'Rechazar solicitud')))
+                'Tolak permintaan')))
 
       ]
     } else if (_hasProposal(record, publicKey, 'reporter')) {
@@ -224,7 +224,7 @@ const ReporterControl = {
                 .then(onsuccess)
             }
           },
-          `Rechazar`))
+          `Menolak`))
       ]
     } else {
       return null
@@ -281,9 +281,9 @@ const ReportLocation = {
       },
       m('.form-row',
         m('.form-group.col-5',
-          m('label.sr-only', { 'for': 'latitude' }, 'Latitud'),
+          m('label.sr-only', { 'for': 'latitude' }, 'Garis Lintang'),
           m("input.form-control[type='text']", {
-            name: 'Latitud..',
+            name: 'latitude',
             type: 'number',
             step: 'any',
             min: -90,
@@ -292,10 +292,10 @@ const ReportLocation = {
               vnode.state.latitude = value
             }),
             value: vnode.state.latitude,
-            placeholder: 'Latitude'
+            placeholder: 'Latitude..'
           })),
         m('.form-group.col-5',
-          m('label.sr-only', { 'for': 'longitude' }, 'Longitud'),
+          m('label.sr-only', { 'for': 'longitude' }, 'Garis Bujur'),
           m("input.form-control[type='text']", {
             name: 'longitude',
             type: 'number',
@@ -306,11 +306,11 @@ const ReportLocation = {
               vnode.state.longitude = value
             }),
             value: vnode.state.longitude,
-            placeholder: 'Longitud..'
+            placeholder: 'Longitude..'
           })),
 
         m('.col-2',
-          m('button.btn.btn-primary', 'Actualizar'))))
+          m('button.btn.btn-primary', 'Memperbarui'))))
     ]
   }
 }
@@ -345,7 +345,7 @@ const ReportValue = {
               placeholder: vnode.attrs.label
             })),
          m('.col-2',
-           m('button.btn.btn-primary', 'Actualizar'))))
+           m('button.btn.btn-primary', 'Memperbarui'))))
     ]
   }
 }
@@ -392,7 +392,7 @@ const ReportTilt = {
             })
           })),
         m('.col-2',
-          m('button.btn.btn-primary', 'Actualizar'))))
+          m('button.btn.btn-primary', 'Memperbarui'))))
     ]
   }
 }
@@ -422,7 +422,7 @@ const ReportShock = {
       m('.form-row',
         m('.col.md-4.mr-1',
           m('input.form-control', {
-            placeholder: 'Aceleración...',
+            placeholder: 'Percepatan...',
             type: 'number',
             step: 'any',
             min: 0,
@@ -432,7 +432,7 @@ const ReportShock = {
           })),
         m('.col.md-4',
           m('input.form-control', {
-            placeholder: 'Duración...',
+            placeholder: 'Durasi...',
             type: 'number',
             step: 'any',
             min: 0,
@@ -441,7 +441,7 @@ const ReportShock = {
             })
           })),
         m('.col-2',
-          m('button.btn.btn-primary', 'Actualizar'))))
+          m('button.btn.btn-primary', 'Memperbarui'))))
     ]
   }
 }
@@ -453,12 +453,12 @@ const AuthorizeReporter = {
 
   view (vnode) {
     return [
-      _row(m('strong', 'Autorizar Administrador')),
+      _row(m('strong', 'Otorisasi Administrator')),
       m('.row',
         m('.col-6',
           m('input.form-control', {
             type: 'text',
-            placeholder: 'Añadir administrador mediante nombre o public key..',
+            placeholder: 'Tambahkan Administrator berdasarkan nama atau kunci publik..',
             value: vnode.state.reporter,
             oninput: m.withAttr('value', (value) => {
               // clear any previously matched values
@@ -474,7 +474,7 @@ const AuthorizeReporter = {
 
         m('.col-4',
           m(MultiSelect, {
-            label: 'Select Fields',
+            label: 'Pilih izin',
             color: 'primary',
             options: authorizableProperties,
             selected: vnode.state.properties,
@@ -495,7 +495,7 @@ const AuthorizeReporter = {
                 vnode.state.properties = []
               }
             },
-            'Autorizar')))
+            'Mengizinkan')))
     ]
   }
 }
@@ -525,42 +525,42 @@ const FishDetail = {
       m('.fish-detail',
         m('h1.text-center', record.recordId),
         _row(
-          _labelProperty('Creado',
+          _labelProperty('Dibuat',
                          _formatTimestamp(getOldestPropertyUpdateTime(record))),
-          _labelProperty('Actualizado',
+          _labelProperty('Diperbarui',
                          _formatTimestamp(getLatestPropertyUpdateTime(record)))),
 
         _row(
-          _labelProperty('Propietario', _agentLink(owner)),
+          _labelProperty('Pemilik', _agentLink(owner)),
           m(TransferControl, {
             publicKey,
             record,
             agents: vnode.state.agents,
             role: 'owner',
-            label: 'Propietario',
+            label: 'Pemilik',
             onsuccess: () => _loadData(vnode.attrs.recordId, vnode.state)
           })),
 
         _row(
-          _labelProperty('Administrador', _agentLink(custodian)),
+          _labelProperty('Administrator', _agentLink(custodian)),
           m(TransferControl, {
             publicKey,
             record,
             agents: vnode.state.agents,
             role: 'custodian',
-            label: 'Administrador',
+            label: 'Administrator',
             onsuccess: () => _loadData(vnode.attrs.recordId, vnode.state)
           })),
 
-        _row(_labelProperty('Variedad', getPropertyValue(record, 'species'))),
+        _row(_labelProperty('Variasi', getPropertyValue(record, 'species'))),
 
         _row(
-          _labelProperty('Dimensiones (eg: 23x4x12)', parsing.toFloat(getPropertyValue(record, 'length', 0))),
-          _labelProperty('Peso (kg)', parsing.toFloat(getPropertyValue(record, 'weight', 0)))),
+          _labelProperty('Ukuran (eg: 23x4x12)', parsing.toFloat(getPropertyValue(record, 'length', 0))),
+          _labelProperty('Berat (kg)', parsing.toFloat(getPropertyValue(record, 'weight', 0)))),
 
         _row(
           _labelProperty(
-            'Localización',
+            'Lokasi',
             _propLink(record, 'location', _formatLocation(getPropertyValue(record, 'location')))
           ),
           (isReporter(record, 'location', publicKey) && !record.final
@@ -569,13 +569,13 @@ const FishDetail = {
 
         _row(
           _labelProperty(
-            'Temperatura',
+            'Suhu',
             _propLink(record, 'temperature', _formatTemp(getPropertyValue(record, 'temperature')))),
           (isReporter(record, 'temperature', publicKey) && !record.final
           ? m(ReportValue,
             {
               name: 'temperature',
-              label: 'Temperature (C°)',
+              label: 'Suhu (C°)',
               record,
               typeField: 'intValue',
               type: payloads.updateProperties.enum.INT,
@@ -612,7 +612,7 @@ const FishDetail = {
                      _loadData(vnode.attrs.recordId, vnode.state))
                  }
                },
-               'Finalizar')))
+               'Menyelesaikan')))
          : '')
        )
     ]

@@ -25,7 +25,7 @@ const text = {
     'penyimpanan, pengangkutan dan penjualan beras dari petani sampai konsumen.',
   startBlurb: 'Untuk menggunakan BerasNet, buat akun dengan mengklik tombol Masuk di bilah navigasi atas. ' +
     'Setelah masuk, Anda dapat menambahkan produk beras ke blockchain, melacak lokasi terkini dan riwayat perpindahan kepemilikannya. ' +
-    'Selain itu, Anda dapat memberi izin kepada pengelola lain di blockchain untuk melacak dan mengalihkan kepemilikan beras tersebut kepada pihak lain dalam rantai pasok.'
+    'Selain itu, Anda dapat memberi izin kepada pengelola lain di blockchain untuk melacak atau mengalihkan kepemilikan beras tersebut kepada pihak lain dalam rantai pasok.'
 };
 
 const Dashboard = {

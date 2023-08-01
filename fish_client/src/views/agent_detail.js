@@ -56,14 +56,14 @@ const infoForm = (state, key, onSubmit, opts) => {
     }, opts)),
     m('button.btn.btn-secondary.btn-sm.mr-1', {
       onclick: () => { state.toggled[key] = false }
-    }, 'CancelAR'),
-    m('button.btn.btn-primary.btn-sm.mr-1', { type: 'submit' }, 'Actualizar')
+    }, 'Membatalkan'),
+    m('button.btn.btn-primary.btn-sm.mr-1', { type: 'submit' }, 'Memperbarui')
   ])
 }
 
 const privateKeyField = state => {
   return labeledField(
-    fieldHeader('Private Key',
+    fieldHeader('Kunci pribadi',
       forms.clickIcon('eye', () => {
         if (state.toggled.privateKey) {
           state.toggled.privateKey = false
@@ -121,7 +121,7 @@ const passwordField = state => {
   }
 
   return labeledField(
-    fieldHeader('Contraseña', editIcon(state.toggled, 'password')),
+    fieldHeader('Kata sandi', editIcon(state.toggled, 'password')),
     toggledInfo(
       state.toggled.password,
       bullets(16),
@@ -146,7 +146,7 @@ const AgentDetailPage = {
     const profileContent = [
       layout.row(privateKeyField(vnode.state)),
       layout.row([
-        editField(vnode.state, 'Nombre de Usuario', 'username'),
+        editField(vnode.state, 'Nama Pengguna', 'username'),
         passwordField(vnode.state)
       ]),
       layout.row(editField(vnode.state, 'Email', 'email'))
@@ -155,7 +155,7 @@ const AgentDetailPage = {
     return [
       layout.title(_.get(vnode.state, 'agent.name', '')),
       m('.container',
-        layout.row(staticField('Public Key', publicKey)),
+        layout.row(staticField('Kunci publik', publicKey)),
         publicKey === api.getPublicKey() ? profileContent : null)
     ]
   }

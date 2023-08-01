@@ -28,8 +28,8 @@ const layout = require('../components/layout')
  * Possible selection options
  */
 const authorizableProperties = [
-  ['location', 'Location'],
-  ['temperature', 'Temperature'],
+  ['location', 'Lokasi'],
+  ['temperature', 'Suhu'],
   ['tilt', 'Tilt'],
   ['shock', 'Shock']
 ]
@@ -121,7 +121,7 @@ const AddFishForm = {
              ]),
 
              m('.reporters.form-group',
-               m('label', 'Authorize Reporters'),
+               m('label', 'Otorisasi Reporters'),
 
                vnode.state.reporters.map((reporter, i) =>
                  m('.row.mb-2',
@@ -155,7 +155,7 @@ const AddFishForm = {
              m('.row.justify-content-end.align-items-end',
                m('col-2',
                  m('button.btn.btn-primary',
-                   'Crear')))))
+                   'Tambahkan')))))
   }
 }
 

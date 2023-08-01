@@ -54,16 +54,16 @@ WORKDIR /sawtooth-supply-chain
 
 # Install NPM dependencies to central location, link to individual components
 COPY bin/splice_json bin/
-COPY fish_client/package.json fish_client/
+COPY beraschain/package.json beraschain/
 COPY server/package.json server/
 
 RUN mkdir /node_deps \
   && bin/splice_json \
-    fish_client/package.json \
+    beraschain/package.json \
     server/package.json \
     > /node_deps/package.json \
   && cd /node_deps && npm install && cd - \
-  && ln -s /node_deps/node_modules fish_client/ \
+  && ln -s /node_deps/node_modules beraschain/ \
   && ln -s /node_deps/node_modules server/
 
 ENV PATH $PATH:/sawtooth-supply-chain/bin

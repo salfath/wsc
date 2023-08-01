@@ -1,0 +1,52 @@
+@startuml SupplyChainApp
+
+title Supply Chain Application - Component Diagram
+
+actor customer as "Customer" #white
+
+rectangle "Supply Server" {
+    rectangle "Business Logic" as backend
+}
+
+rectangle "Fish Client"
+
+database "RethinkDB" as rethinkDB
+
+rectangle "Supply Shell" {
+    rectangle "Shell Script" as shellScript
+}
+
+rectangle "Supply TP" {
+    rectangle "Transaction Processor" as transactionProcessor
+}
+
+rectangle "Validator"
+
+rectangle "REST API"
+
+rectangle "Settings TP" {
+    rectangle "Transaction Processor" as settingsProcessor
+}
+
+rectangle "Ledger Sync" {
+    rectangle "Data Sync" as dataSync
+}
+
+customer -down-> "Fish Client"
+"Fish Client" -down-> "REST API"
+"REST API" --> backend
+backend --> rethinkDB
+backend -right-> transactionProcessor
+backend -right-> dataSync
+backend -down-> settingsProcessor
+shellScript --> rethinkDB
+shellScript --> transactionProcessor
+transactionProcessor --> "Validator"
+transactionProcessor --> backend
+"Validator" --> "REST API"
+"Validator" --> settingsProcessor
+"Validator" --> rethinkDB
+"Validator" --> dataSync
+dataSync --> rethinkDB
+
+@enduml

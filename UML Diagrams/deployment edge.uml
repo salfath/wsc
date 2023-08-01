@@ -1,0 +1,37 @@
+@startuml
+package "Cloud Environment" {
+  [Blockchain Network]
+  [Database Server]
+  [Application Server]
+}
+
+node "Edge Device (Farm)" {
+  [Farmer Application]
+  [Local Database - F]
+}
+node "Edge Device (Transport)" {
+  [Transport Application]
+  [Local Database - T]
+}
+node "Edge Device (Processing Plant)" {
+  [Processing Application]
+  [Local Database - P]
+}
+node "Edge Device (Retail)" {
+  [Retail Application]
+  [Local Database - R]
+}
+node "Edge Device (Consumer)" {
+  [Consumer Application]
+  [Local Database - C]
+}
+
+[Farmer Application] --> [Application Server]
+[Transport Application] --> [Application Server]
+[Processing Application] --> [Application Server]
+[Retail Application] --> [Application Server]
+[Consumer Application] --> [Application Server]
+
+[Application Server] --> [Database Server]
+[Application Server] --> [Blockchain Network]
+@enduml

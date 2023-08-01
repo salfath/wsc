@@ -1,0 +1,45 @@
+@startuml
+node "Blockchain Network" {
+  [Blockchain Node]
+}
+
+node "Edge Device (Farm)" {
+  [Farmer Application]
+  [Local Database]
+  [Blockchain Node]
+}
+node "Edge Device (Transport)" {
+  [Transport Application]
+  [Local Database]
+  [Blockchain Node]
+}
+node "Edge Device (Processing Plant)" {
+  [Processing Application]
+  [Local Database]
+  [Blockchain Node]
+}
+node "Edge Device (Retail)" {
+  [Retail Application]
+  [Local Database]
+  [Blockchain Node]
+}
+node "Edge Device (Consumer)" {
+  [Consumer Application]
+  [Local Database]
+  [Blockchain Node]
+}
+
+[Farmer Application] ..> [Local Database]
+[Transport Application] ..> [Local Database]
+[Processing Application] ..> [Local Database]
+[Retail Application] ..> [Local Database]
+[Consumer Application] ..> [Local Database]
+
+[Farmer Application] ..> [Blockchain Node]
+[Transport Application] ..> [Blockchain Node]
+[Processing Application] ..> [Blockchain Node]
+[Retail Application] ..> [Blockchain Node]
+[Consumer Application] ..> [Blockchain Node]
+
+[Blockchain Node] ..> [Blockchain Network]
+@enduml

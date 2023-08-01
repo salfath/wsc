@@ -1,0 +1,44 @@
+@startuml
+entity "Petani" as petani {
+  +id : number
+  --
+  nama : text
+}
+
+entity "Beras" as beras {
+  +id : number
+  --
+  jenis : text
+  tanggal_panen : date
+}
+
+entity "Transportasi" as transportasi {
+  +id : number
+  --
+  tanggal_pengiriman : date
+}
+
+entity "Pengolahan" as pengolahan {
+  +id : number
+  --
+  jenis_pengolahan : text
+}
+
+entity "Retail" as retail {
+  +id : number
+  --
+  nama : text
+}
+
+entity "Konsumen" as konsumen {
+  +id : number
+  --
+  nama : text
+}
+
+petani ||..o{ beras : PRODUCES
+beras ||..o{ transportasi : HAS
+transportasi ||..o{ pengolahan : UNDERGOES
+pengolahan ||..o{ retail : SUPPLIES
+retail ||..o{ konsumen : SELLS_TO
+@enduml

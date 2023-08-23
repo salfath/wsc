@@ -522,7 +522,7 @@ const RiceDetail = {
     let custodian = vnode.state.custodian
     let record = vnode.state.record
     return [
-      m('.fish-detail',
+      m('.rice-detail',
         m('h1.text-center', record.recordId),
         _row(
           _labelProperty('Dibuat',

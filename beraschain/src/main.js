@@ -51,7 +51,7 @@ const Layout = {
 const loggedInNav = () => {
   const links = [
     ['/create', 'Tambahkan Beras'],
-    ['/fish', 'Beras'],
+    ['/rice', 'Beras'],
     ['/agents', 'Administrator']
   ]
   return m(navigation.Navbar, {}, [
@@ -63,7 +63,7 @@ const loggedInNav = () => {
 
 const loggedOutNav = () => {
   const links = [
-    ['/fish', 'Beras'],
+    ['/rice', 'Beras'],
     ['/agents', 'Distributor']
   ]
   return m(navigation.Navbar, {}, [
@@ -122,8 +122,8 @@ document.addEventListener('DOMContentLoaded', () => {
     '/agents/:publicKey': resolve(AgentDetailPage),
     '/agents': resolve(AgentList),
     '/create': resolve(AddRice, true),
-    '/fish/:recordId': resolve(RiceDetail),
-    '/fish': resolve(RiceList),
+    '/rice/:recordId': resolve(RiceDetail),
+    '/rice': resolve(RiceList),
     '/login': resolve(LoginForm),
     '/logout': { onmatch: logout },
     '/profile': { onmatch: profile },

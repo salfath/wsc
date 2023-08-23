@@ -8,7 +8,7 @@ rectangle "Supply Server" {
     rectangle "Business Logic" as backend
 }
 
-rectangle "Fish Client"
+rectangle "Rice Client"
 
 database "RethinkDB" as rethinkDB
 
@@ -32,8 +32,8 @@ rectangle "Ledger Sync" {
     rectangle "Data Sync" as dataSync
 }
 
-customer -down-> "Fish Client"
-"Fish Client" -down-> "REST API"
+customer -down-> "Rice Client"
+"Rice Client" -down-> "REST API"
 "REST API" --> backend
 backend --> rethinkDB
 backend -right-> transactionProcessor

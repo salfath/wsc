@@ -2,7 +2,7 @@
   "records": [
     {
       "recordId": "1-4m-4-f1sh",
-      "recordType": "fish",
+      "recordType": "rice",
       "properties": [
           {
             "name": "species",
@@ -36,7 +36,7 @@
 
     {
       "recordId": "1-4m-sm0l-f1sh",
-      "recordType": "fish",
+      "recordType": "rice",
       "properties": [
           {
             "name": "species",
@@ -67,7 +67,7 @@
 
     {
       "recordId": "1-4m-n0t-f1sh",
-      "recordType": "fish",
+      "recordType": "rice",
       "properties": [
           {
             "name": "species",

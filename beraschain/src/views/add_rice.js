@@ -35,7 +35,7 @@ const authorizableProperties = [
 ]
 
 /**
- * The Form for tracking a new fish.
+ * The Form for tracking a new rice.
  */
 const AddRice = {
   oninit (vnode) {
@@ -54,7 +54,7 @@ const AddRice = {
   },
 
   view (vnode) {
-    return m('.fish_form',
+    return m('.rice_form',
              m('form', {
                onsubmit: (e) => {
                  e.preventDefault()
@@ -186,7 +186,7 @@ const _updateReporters = (vnode, reporterIndex) => {
 const _handleSubmit = (signingKey, state) => {
   const recordPayload = payloads.createRecord({
     recordId: state.serialNumber,
-    recordType: 'fish',
+    recordType: 'rice',
     properties: [
       {
         name: 'species',

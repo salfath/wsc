@@ -21,7 +21,7 @@ const _ = require('lodash')
 const sjcl = require('sjcl')
 
 const API_PATH = 'api/'
-const STORAGE_KEY = 'fish_net.authorization'
+const STORAGE_KEY = 'rice_net.authorization'
 let authToken = null
 
 /**

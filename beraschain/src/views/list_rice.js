@@ -33,7 +33,7 @@ const RiceList = {
     vnode.state.currentPage = 0
 
     const refresh = () => {
-      api.get('records?recordType=fish').then((records) => {
+      api.get('records?recordType=rice').then((records) => {
         vnode.state.records = records
         vnode.state.records.sort((a, b) => {
           return getLatestPropertyUpdateTime(b) - getLatestPropertyUpdateTime(a)
@@ -53,7 +53,7 @@ const RiceList = {
   view (vnode) {
     let publicKey = api.getPublicKey()
     return [
-      m('.fish-table',
+      m('.rice-table',
         m('.row.btn-row.mb-2', _controlButtons(vnode, publicKey)),
         m(Table, {
           headers: [

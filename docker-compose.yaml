@@ -42,8 +42,8 @@ services:
           sawtooth keygen &&
           cd server/ &&
           npm run init &&
-          npm run make-fish &&
-          npm run seed-sample-fish &&
+          npm run make-rice &&
+          npm run seed-sample-rice &&
           cd -
         fi;
         tail -f /dev/null

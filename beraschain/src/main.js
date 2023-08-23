@@ -30,7 +30,7 @@ const AddRice = require('./views/add_rice')
 const AgentDetailPage = require('./views/agent_detail')
 const AgentList = require('./views/list_agents')
 const RiceList = require('./views/list_rice')
-const FishDetail = require('./views/fish_detail')
+const RiceDetail = require('./views/rice_detail')
 const Dashboard = require('./views/dashboard')
 const LoginForm = require('./views/login_form')
 const PropertyDetailPage = require('./views/property_detail')
@@ -122,7 +122,7 @@ document.addEventListener('DOMContentLoaded', () => {
     '/agents/:publicKey': resolve(AgentDetailPage),
     '/agents': resolve(AgentList),
     '/create': resolve(AddRice, true),
-    '/fish/:recordId': resolve(FishDetail),
+    '/fish/:recordId': resolve(RiceDetail),
     '/fish': resolve(RiceList),
     '/login': resolve(LoginForm),
     '/logout': { onmatch: logout },

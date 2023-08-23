@@ -500,7 +500,7 @@ const AuthorizeReporter = {
   }
 }
 
-const FishDetail = {
+const RiceDetail = {
   oninit (vnode) {
     _loadData(vnode.attrs.recordId, vnode.state)
     vnode.state.refreshId = setInterval(() => {
@@ -739,4 +739,4 @@ const _revokeAuthorization = (record, reporterKey, properties) => {
   })
 }
 
-module.exports = FishDetail
+module.exports = RiceDetail

@@ -26,7 +26,7 @@ const api = require('./services/api')
 const transactions = require('./services/transactions')
 const navigation = require('./components/navigation')
 
-const AddFishForm = require('./views/add_fish_form')
+const AddRice = require('./views/add_rice')
 const AgentDetailPage = require('./views/agent_detail')
 const AgentList = require('./views/list_agents')
 const FishList = require('./views/list_fish')
@@ -121,7 +121,7 @@ document.addEventListener('DOMContentLoaded', () => {
     '/': resolve(Dashboard),
     '/agents/:publicKey': resolve(AgentDetailPage),
     '/agents': resolve(AgentList),
-    '/create': resolve(AddFishForm, true),
+    '/create': resolve(AddRice, true),
     '/fish/:recordId': resolve(FishDetail),
     '/fish': resolve(FishList),
     '/login': resolve(LoginForm),

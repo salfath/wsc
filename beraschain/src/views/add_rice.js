@@ -37,7 +37,7 @@ const authorizableProperties = [
 /**
  * The Form for tracking a new fish.
  */
-const AddFishForm = {
+const AddRice = {
   oninit (vnode) {
     // Initialize the empty reporters fields
     vnode.state.reporters = [
@@ -235,4 +235,4 @@ const _formGroup = (label, formEl) =>
     m('label', label),
     formEl)
 
-module.exports = AddFishForm
+module.exports = AddRice

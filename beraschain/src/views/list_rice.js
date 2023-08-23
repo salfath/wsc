@@ -25,7 +25,7 @@ const {getPropertyValue, getLatestPropertyUpdateTime, getOldestPropertyUpdateTim
 
 const PAGE_SIZE = 50
 
-const FishList = {
+const RiceList = {
   oninit (vnode) {
     vnode.state.records = []
     vnode.state.filteredRecords = []
@@ -120,4 +120,4 @@ const _pagingButtons = (vnode) =>
     maxPage: Math.floor(vnode.state.filteredRecords.length / PAGE_SIZE)
   })
 
-module.exports = FishList
+module.exports = RiceList

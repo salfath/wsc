@@ -29,7 +29,7 @@ const navigation = require('./components/navigation')
 const AddRice = require('./views/add_rice')
 const AgentDetailPage = require('./views/agent_detail')
 const AgentList = require('./views/list_agents')
-const FishList = require('./views/list_fish')
+const RiceList = require('./views/list_rice')
 const FishDetail = require('./views/fish_detail')
 const Dashboard = require('./views/dashboard')
 const LoginForm = require('./views/login_form')
@@ -123,7 +123,7 @@ document.addEventListener('DOMContentLoaded', () => {
     '/agents': resolve(AgentList),
     '/create': resolve(AddRice, true),
     '/fish/:recordId': resolve(FishDetail),
-    '/fish': resolve(FishList),
+    '/fish': resolve(RiceList),
     '/login': resolve(LoginForm),
     '/logout': { onmatch: logout },
     '/profile': { onmatch: profile },

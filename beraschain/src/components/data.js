@@ -22,7 +22,11 @@ const GoogleMapsLoader = require('google-maps')
 const modals = require('./modals')
 const api = require('../services/api')
 
-GoogleMapsLoader.KEY = null
+GoogleMapsLoader.KEY = 'AIzaSyAtimT4fRFc0GlZDPnMh0Rho7aZQKO4lXU'
+GoogleMapsLoader.VERSION = 'weekly'
+GoogleMapsLoader.onLoad = function() {
+  console.log('Google Maps API has been loaded')
+}
 let google = null
 
 // If maps key is missing, asks server for it, and then finally the user
@@ -153,16 +157,28 @@ const MapWidget = {
       .then(() => {
         GoogleMapsLoader.load(goog => {
           google = goog
+
+          console.log('Google Maps API loaded')
           const coordinates = vnode.attrs.coordinates.map(coord => ({
             lat: coord.latitude,
             lng: coord.longitude
           }))
+          console.log('Coordinates:', coordinates)
 
           const container = document.getElementById('map-container')
+          console.log('Container:', container)
+
+          // Set default width and height
+          container.style.width = '800px'
+          container.style.height = '600px'
+
           vnode.state.map = new google.maps.Map(container, { zoom: 4 })
+          console.log('Map:', vnode.state.map)
+
           vnode.state.markers = coordinates.map(position => {
             return new google.maps.Marker({ position, map: vnode.state.map })
           })
+          console.log('Markers:', vnode.state.markers)
 
           vnode.state.path = new google.maps.Polyline({
             map: vnode.state.map,

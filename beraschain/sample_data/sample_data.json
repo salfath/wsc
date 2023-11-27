@@ -23,8 +23,8 @@
             "name": "location",
             "dataType": 4,
             "locationValue": {
-              "latitude": 42456486,
-              "longitude": -67982434
+              "latitude": -6.288573200996969, 
+              "longitude": 107.04184748897681
             }
           }
       ],
@@ -57,8 +57,8 @@
             "name": "location",
             "dataType": 4,
             "locationValue": {
-              "latitude": 46786299,
-              "longitude": -92051336
+              "latitude": -6.215655110884673, 
+              "longitude": 107.11747035390908
             }
           }
       ],
@@ -88,8 +88,8 @@
             "name": "location",
             "dataType": 4,
             "locationValue": {
-              "latitude": -31404863,
-              "longitude": 40018772
+              "latitude": -6.472867632936099, 
+              "longitude": 106.8503247086001
             }
           }
       ],

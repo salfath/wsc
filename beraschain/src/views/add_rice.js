@@ -23,17 +23,6 @@ const authorizableProperties = [
  */
 const AddRice = {
   oninit (vnode) {
-    // Check if Geolocation API is available
-    if (navigator.geolocation) {
-      // Step 2: Get current position
-      navigator.geolocation.getCurrentPosition((position) => {
-        // Step 3: Update state with current latitude and longitude
-        state.latitude = position.coords.latitude
-        state.longitude = position.coords.longitude
-        // Force a redraw to update the form fields
-        m.redraw()
-      })
-    }
     // Initialize the empty reporters fields
     vnode.state.reporters = [
       {
@@ -98,22 +87,22 @@ const AddRice = {
                  step: 'any',
                  min: -90,
                  max: 90,
-                 value: AddRice.latitude,
+                 value: window.AppGlobals.currentLatitude,
                  oninput: m.withAttr('value', (value) => {
                    vnode.state.latitude = value
                  }),
-                 // value: vnode.state.latitude
+                 //value: vnode.state.latitude
                })),
                _formGroup('Garis Bujur', m('input.form-control', {
                  type: 'number',
                  step: 'any',
                  min: -180,
                  max: 180,
-                 value: AddRice.longitude,
+                 value: window.AppGlobals.currentLongitude,
                  oninput: m.withAttr('value', (value) => {
                    vnode.state.longitude = value
                  }),
-                 // value: vnode.state.longitude
+                 //value: vnode.state.longitude
                }))
              ]),
 

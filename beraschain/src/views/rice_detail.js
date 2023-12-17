@@ -273,11 +273,12 @@ const ReportLocation = {
             step: 'any',
             min: -90,
             max: 90,
+            value: window.AppGlobals.currentLatitude,
             onchange: m.withAttr('value', (value) => {
               vnode.state.latitude = value
             }),
-            value: vnode.state.latitude,
-            placeholder: 'Latitude..'
+            //value: vnode.state.latitude,
+            //placeholder: 'Latitude..'
           })),
         m('.form-group.col-5',
           m('label.sr-only', { 'for': 'longitude' }, 'Garis Bujur'),
@@ -287,11 +288,12 @@ const ReportLocation = {
             step: 'any',
             min: -180,
             max: 180,
+            value: window.AppGlobals.currentLongitude,
             onchange: m.withAttr('value', (value) => {
               vnode.state.longitude = value
             }),
-            value: vnode.state.longitude,
-            placeholder: 'Longitude..'
+            //value: vnode.state.longitude,
+            //placeholder: 'Longitude..'
           })),
 
         m('.col-2',

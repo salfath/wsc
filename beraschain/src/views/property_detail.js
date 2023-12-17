@@ -95,12 +95,14 @@ const typedInput = state => {
     return [
       m('.col.md-4.mr-1',
         m('input.form-control', {
-          placeholder: 'Enter Latitude...',
+          // placeholder: 'Enter Latitude...',
+          value: window.AppGlobals.currentLatitude,
           oninput: withIntVal(value => { state.tmp.latitude = value })
         })),
       m('.col.md-4',
         m('input.form-control', {
-          placeholder: 'Enter Longitude...',
+          //placeholder: 'Enter Longitude...',
+          value: window.AppGlobals.currentLongitude,
           oninput: withIntVal(value => { state.tmp.longitude = value })
         }))
     ]

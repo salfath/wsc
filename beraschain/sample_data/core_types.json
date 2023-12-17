@@ -3,27 +3,27 @@
     "name": "rice",
     "properties": [
         {
-          "name": "species",
+          "name": "varietas",
           "dataType": 1,
           "required": true
         },
         {
-          "name": "length",
+          "name": "tglkemas",
           "dataType": 2,
           "required": true
         },
         {
-          "name": "weight",
+          "name": "berat",
           "dataType": 2,
           "required": true
         },
         {
-          "name": "location",
+          "name": "lokasi",
           "dataType": 4,
           "required": true
         },
         {
-          "name": "temperature",
+          "name": "kedaluwarsa",
           "dataType": 2
         },
         {

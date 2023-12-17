@@ -1,64 +1,64 @@
 {
   "records": [
     {
-      "recordId": "1-4m-4-f1sh",
+      "recordId": "GKP-MCL-230710-P-MDN30-1",
       "recordType": "rice",
       "properties": [
           {
-            "name": "species",
+            "name": "varietas",
             "dataType": 1,
             "stringValue": "BFT"
           },
           {
-            "name": "length",
+            "name": "tglkemas",
             "dataType": 2,
             "intValue": 2257000
           },
           {
-            "name": "weight",
+            "name": "berat",
             "dataType": 2,
             "intValue": 247096000
           },
           {
-            "name": "location",
+            "name": "lokasi",
             "dataType": 4,
             "locationValue": {
-              "latitude": -6.288573200996969, 
-              "longitude": 107.04184748897681
+              "latitude": -6288573.200996969, 
+              "longitude": 107041847.48897681
             }
           }
       ],
       "ownerIndex": 0,
       "custodianIndex": 2,
       "reporterIndex": 1,
-      "reportableProperties": ["temperature", "location", "tilt", "shock"]
+      "reportableProperties": ["kedaluwarsa", "lokasi", "tilt", "shock"]
     },
 
     {
-      "recordId": "1-4m-sm0l-f1sh",
+      "recordId": "GKP-Ketan-230714-T-MDN30-2",
       "recordType": "rice",
       "properties": [
           {
-            "name": "species",
+            "name": "varietas",
             "dataType": 1,
             "stringValue": "STV"
           },
           {
-            "name": "length",
+            "name": "tglkemas",
             "dataType": 2,
             "intValue": 672000
           },
           {
-            "name": "weight",
+            "name": "berat",
             "dataType": 2,
             "intValue": 7826000
           },
           {
-            "name": "location",
+            "name": "lokasi",
             "dataType": 4,
             "locationValue": {
-              "latitude": -6.215655110884673, 
-              "longitude": 107.11747035390908
+              "latitude": -6215655.110884673, 
+              "longitude": 107117470.35390908
             }
           }
       ],
@@ -66,30 +66,30 @@
     },
 
     {
-      "recordId": "1-4m-n0t-f1sh",
+      "recordId": "GKP-IR42-230714-T-MDN30-1",
       "recordType": "rice",
       "properties": [
           {
-            "name": "species",
+            "name": "varietas",
             "dataType": 1,
             "stringValue": "SPW"
           },
           {
-            "name": "length",
+            "name": "tglkemas",
             "dataType": 2,
             "intValue": 20567000
           },
           {
-            "name": "weight",
+            "name": "berat",
             "dataType": 2,
             "intValue": 57243980000
           },
           {
-            "name": "location",
+            "name": "lokasi",
             "dataType": 4,
             "locationValue": {
-              "latitude": -6.472867632936099, 
-              "longitude": 106.8503247086001
+              "latitude": -6472867.632936099, 
+              "longitude": 106850324.7086001
             }
           }
       ],

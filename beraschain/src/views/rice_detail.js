@@ -1,19 +1,4 @@
-/**
- * Copyright 2017 Intel Corporation
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ----------------------------------------------------------------------------
- */
+
 'use strict'
 
 const m = require('mithril')
@@ -36,8 +21,8 @@ const {
  * Possible selection options
  */
 const authorizableProperties = [
-  ['location', 'Lokasi'],
-  ['temperature', 'Suhu'],
+  ['lokasi', 'Lokasi'],
+  ['kedaluwarsa', 'Kedaluwarsa'],
   ['tilt', 'Tilt'],
   ['shock', 'Shock']
 ]
@@ -266,7 +251,7 @@ const ReportLocation = {
         onsubmit: (e) => {
           e.preventDefault()
           _updateProperty(vnode.attrs.record, {
-            name: 'location',
+            name: 'lokasi',
             locationValue: {
               latitude: parsing.toInt(vnode.state.latitude),
               longitude: parsing.toInt(vnode.state.longitude)
@@ -552,30 +537,30 @@ const RiceDetail = {
             onsuccess: () => _loadData(vnode.attrs.recordId, vnode.state)
           })),
 
-        _row(_labelProperty('Variasi', getPropertyValue(record, 'species'))),
+        _row(_labelProperty('Varietas', getPropertyValue(record, 'varietas'))),
 
         _row(
-          _labelProperty('Ukuran (eg: 23x4x12)', parsing.toFloat(getPropertyValue(record, 'length', 0))),
-          _labelProperty('Berat (kg)', parsing.toFloat(getPropertyValue(record, 'weight', 0)))),
+          _labelProperty('Tanggal Pengemasan', parsing.toFloat(getPropertyValue(record, 'tglkemas', 0))),
+          _labelProperty('Berat (kg)', parsing.toFloat(getPropertyValue(record, 'berat', 0)))),
 
         _row(
           _labelProperty(
             'Lokasi',
-            _propLink(record, 'location', _formatLocation(getPropertyValue(record, 'location')))
+            _propLink(record, 'lokasi', _formatLocation(getPropertyValue(record, 'lokasi')))
           ),
-          (isReporter(record, 'location', publicKey) && !record.final
+          (isReporter(record, 'lokasi', publicKey) && !record.final
            ? m(ReportLocation, { record, onsuccess: () => _loadData(record.recordId, vnode.state) })
            : null)),
 
         _row(
           _labelProperty(
-            'Suhu',
-            _propLink(record, 'temperature', _formatTemp(getPropertyValue(record, 'temperature')))),
-          (isReporter(record, 'temperature', publicKey) && !record.final
+            'Kedaluwarsa',
+            _propLink(record, 'kedaluwarsa', _formatTemp(getPropertyValue(record, 'kedaluwarsa')))),
+          (isReporter(record, 'kedaluwarsa', publicKey) && !record.final
           ? m(ReportValue,
             {
-              name: 'temperature',
-              label: 'Suhu (C°)',
+              name: 'kedaluwarsa',
+              label: 'Kedaluwarsa',
               record,
               typeField: 'intValue',
               type: payloads.updateProperties.enum.INT,
@@ -628,10 +613,10 @@ const _formatValue = (record, propName) => {
   }
 }
 
-const _formatLocation = (location) => {
-  if (location && location.latitude !== undefined && location.longitude !== undefined) {
-    let latitude = parsing.toFloat(location.latitude)
-    let longitude = parsing.toFloat(location.longitude)
+const _formatLocation = (lokasi) => {
+  if (lokasi && lokasi.latitude !== undefined && lokasi.longitude !== undefined) {
+    let latitude = parsing.toFloat(lokasi.latitude)
+    let longitude = parsing.toFloat(lokasi.longitude)
     return `${latitude}, ${longitude}`
   } else {
     return 'Unknown'

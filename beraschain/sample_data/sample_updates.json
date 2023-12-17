@@ -1,10 +1,10 @@
 [
   {
-    "recordId": "1-4m-4-f1sh",
+    "recordId": "GKP-MCL-230710-P-MDN30-1",
     "privateKey": "1ab38027228aef9a6642d6acbf7aa62e8db18795cc09c3e03586e49396afb3df",
     "updates": [
       {
-        "name": "temperature",
+        "name": "kedaluwarsa",
         "dataType": 2,
         "value": 500000,
         "isRelative": true,
@@ -12,11 +12,11 @@
       },
 
       {
-        "name": "location",
+        "name": "lokasi",
         "dataType": 4,
         "value": {
-          "latitude": -56740,
-          "longitude": -99300
+          "latitude": -6472867.632936099, 
+          "longitude": 106850324.7086001
         },
         "isRelative": true,
         "isAverage": true
@@ -46,11 +46,11 @@
   },
 
   {
-    "recordId": "1-4m-sm0l-f1sh",
+    "recordId": "GKP-Ketan-230714-T-MDN30-2",
     "privateKey": "1ab38027228aef9a6642d6acbf7aa62e8db18795cc09c3e03586e49396afb3df",
     "updates": [
       {
-        "name": "temperature",
+        "name": "kedaluwarsa",
         "dataType": 2,
         "value": 1000000,
         "isRelative": true,
@@ -58,11 +58,11 @@
       },
 
       {
-        "name": "location",
+        "name": "lokasi",
         "dataType": 4,
         "value": {
-          "latitude": -90360,
-          "longitude": -61290
+          "latitude": -6288573.200996969, 
+          "longitude": 107041847.48897681
         },
         "isRelative": true,
         "isAverage": true
@@ -92,11 +92,11 @@
   },
 
   {
-    "recordId": "1-4m-n0t-f1sh",
+    "recordId": "GKP-IR42-230714-T-MDN30-1",
     "privateKey": "063f9ca21d4ef4955f3e120374f7c22272f42106c466a91d01779efba22c2cb6",
     "updates": [
       {
-        "name": "temperature",
+        "name": "kedaluwarsa",
         "dataType": 2,
         "value": 3000000,
         "isRelative": true,
@@ -104,11 +104,11 @@
       },
 
       {
-        "name": "location",
+        "name": "lokasi",
         "dataType": 4,
         "value": {
-          "latitude": -215515,
-          "longitude": -1073695
+          "latitude": -6215655.110884673, 
+          "longitude": 107117470.35390908
         },
         "isRelative": true,
         "isAverage": true

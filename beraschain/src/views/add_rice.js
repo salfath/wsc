@@ -1,19 +1,3 @@
-/**
- * Copyright 2017 Intel Corporation
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ----------------------------------------------------------------------------
- */
 
 const m = require('mithril')
 
@@ -28,8 +12,8 @@ const layout = require('../components/layout')
  * Possible selection options
  */
 const authorizableProperties = [
-  ['location', 'Lokasi'],
-  ['temperature', 'Suhu'],
+  ['lokasi', 'Lokasi'],
+  ['kedaluwarsa', 'Kedaluwarsa'],
   ['tilt', 'Tilt'],
   ['shock', 'Shock']
 ]
@@ -39,6 +23,17 @@ const authorizableProperties = [
  */
 const AddRice = {
   oninit (vnode) {
+    // Check if Geolocation API is available
+    if (navigator.geolocation) {
+      // Step 2: Get current position
+      navigator.geolocation.getCurrentPosition((position) => {
+        // Step 3: Update state with current latitude and longitude
+        state.latitude = position.coords.latitude
+        state.longitude = position.coords.longitude
+        // Force a redraw to update the form fields
+        m.redraw()
+      })
+    }
     // Initialize the empty reporters fields
     vnode.state.reporters = [
       {
@@ -62,38 +57,38 @@ const AddRice = {
                }
              },
              m('legend', 'Tambahkan Beras'),
-             _formGroup('Nomor seri', m('input.form-control', {
+             _formGroup('Nomor Seri', m('input.form-control', {
                type: 'text',
                oninput: m.withAttr('value', (value) => {
                  vnode.state.serialNumber = value
                }),
                value: vnode.state.serialNumber
              })),
-             _formGroup('Variasi (3 huruf)', m('input.form-control', {
+             _formGroup('Varietas', m('input.form-control', {
                type: 'text',
                oninput: m.withAttr('value', (value) => {
-                 vnode.state.species = value
+                 vnode.state.varietas = value
                }),
-               value: vnode.state.species
+               value: vnode.state.varietas
              })),
 
              layout.row([
-               _formGroup('Suhu (ºC)', m('input.form-control', {
+               _formGroup('Kedaluwarsa', m('input.form-control', {
                  type: 'number',
                  min: 0,
                  step: 'any',
                  oninput: m.withAttr('value', (value) => {
-                   vnode.state.lengthInCM = value
+                   vnode.state.tglkemas = value
                  }),
-                 value: vnode.state.lengthInCM
+                 value: vnode.state.tglkemas
                })),
                _formGroup('Berat (kg)', m('input.form-control', {
                  type: 'number',
                  step: 'any',
                  oninput: m.withAttr('value', (value) => {
-                   vnode.state.weightInKg = value
+                   vnode.state.berat = value
                  }),
-                 value: vnode.state.weightInKg
+                 value: vnode.state.berat
                }))
              ]),
 
@@ -103,20 +98,22 @@ const AddRice = {
                  step: 'any',
                  min: -90,
                  max: 90,
+                 value: AddRice.latitude,
                  oninput: m.withAttr('value', (value) => {
                    vnode.state.latitude = value
                  }),
-                 value: vnode.state.latitude
+                 // value: vnode.state.latitude
                })),
                _formGroup('Garis Bujur', m('input.form-control', {
                  type: 'number',
                  step: 'any',
                  min: -180,
                  max: 180,
+                 value: AddRice.longitude,
                  oninput: m.withAttr('value', (value) => {
                    vnode.state.longitude = value
                  }),
-                 value: vnode.state.longitude
+                 // value: vnode.state.longitude
                }))
              ]),
 
@@ -189,22 +186,22 @@ const _handleSubmit = (signingKey, state) => {
     recordType: 'rice',
     properties: [
       {
-        name: 'species',
-        stringValue: state.species,
+        name: 'varietas',
+        stringValue: state.varietas,
         dataType: payloads.createRecord.enum.STRING
       },
       {
-        name: 'length',
-        intValue: parsing.toInt(state.lengthInCM),
+        name: 'tglkemas',
+        intValue: parsing.toInt(state.tglkemas),
         dataType: payloads.createRecord.enum.INT
       },
       {
-        name: 'weight',
-        intValue: parsing.toInt(state.weightInKg),
+        name: 'berat',
+        intValue: parsing.toInt(state.berat),
         dataType: payloads.createRecord.enum.INT
       },
       {
-        name: 'location',
+        name: 'lokasi',
         locationValue: {
           latitude: parsing.toInt(state.latitude),
           longitude: parsing.toInt(state.longitude)

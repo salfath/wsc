@@ -92,17 +92,25 @@ const typedInput = state => {
   const { dataType, name } = state.property
 
   if (dataType === 'LOCATION') {
+    // Initialize state with current location if not already set
+    if (state.tmp.latitude === undefined) {
+      state.tmp.latitude = window.AppGlobals.currentLatitude;
+    }
+    if (state.tmp.longitude === undefined) {
+      state.tmp.longitude = window.AppGlobals.currentLongitude;
+    }
+
     return [
       m('.col.md-4.mr-1',
         m('input.form-control', {
           // placeholder: 'Enter Latitude...',
-          value: window.AppGlobals.currentLatitude,
+          value: state.tmp.latitude,
           oninput: withIntVal(value => { state.tmp.latitude = value })
         })),
       m('.col.md-4',
         m('input.form-control', {
           //placeholder: 'Enter Longitude...',
-          value: window.AppGlobals.currentLongitude,
+          value: state.tmp.longitude,
           oninput: withIntVal(value => { state.tmp.longitude = value })
         }))
     ]

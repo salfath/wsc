@@ -23,6 +23,7 @@ const authorizableProperties = [
  */
 const AddRice = {
   oninit (vnode) {
+  
     // Initialize the empty reporters fields
     vnode.state.reporters = [
       {
@@ -38,6 +39,14 @@ const AddRice = {
   },
 
   view (vnode) {
+    // Initialize latitude and longitude if not already set
+    if (vnode.state.latitude === undefined) {
+      vnode.state.latitude = window.AppGlobals.currentLatitude;
+    }
+    if (vnode.state.longitude === undefined) {
+      vnode.state.longitude = window.AppGlobals.currentLongitude;
+    }
+
     return m('.rice_form',
              m('form', {
                onsubmit: (e) => {
@@ -87,22 +96,20 @@ const AddRice = {
                  step: 'any',
                  min: -90,
                  max: 90,
-                 value: window.AppGlobals.currentLatitude,
+                 value: vnode.state.latitude,
                  oninput: m.withAttr('value', (value) => {
                    vnode.state.latitude = value
                  }),
-                 //value: vnode.state.latitude
                })),
                _formGroup('Garis Bujur', m('input.form-control', {
                  type: 'number',
                  step: 'any',
                  min: -180,
                  max: 180,
-                 value: window.AppGlobals.currentLongitude,
+                 value: vnode.state.longitude,
                  oninput: m.withAttr('value', (value) => {
                    vnode.state.longitude = value
                  }),
-                 //value: vnode.state.longitude
                }))
              ]),
 

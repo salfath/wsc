@@ -244,6 +244,12 @@ const _propLink = (record, propName, content) =>
     content)
 
 const ReportLocation = {
+  oninit: (vnode) => {
+    // Set default values from window.AppGlobals
+    vnode.state.latitude = window.AppGlobals.currentLatitude || '';
+    vnode.state.longitude = window.AppGlobals.currentLongitude || '';
+  },
+
   view: (vnode) => {
     let onsuccess = vnode.attrs.onsuccess || (() => null)
     return [
@@ -273,7 +279,7 @@ const ReportLocation = {
             step: 'any',
             min: -90,
             max: 90,
-            value: window.AppGlobals.currentLatitude,
+            value: vnode.state.latitude,
             onchange: m.withAttr('value', (value) => {
               vnode.state.latitude = value
             }),
@@ -288,7 +294,7 @@ const ReportLocation = {
             step: 'any',
             min: -180,
             max: 180,
-            value: window.AppGlobals.currentLongitude,
+            value: vnode.state.longitude,
             onchange: m.withAttr('value', (value) => {
               vnode.state.longitude = value
             }),

@@ -7,17 +7,22 @@
           {
             "name": "varietas",
             "dataType": 1,
-            "stringValue": "BFT"
+            "stringValue": "Muncul"
           },
           {
-            "name": "tglkemas",
+            "name": "tglprod",
             "dataType": 2,
-            "intValue": 2257000
+            "intValue": 1279895874000
+          },
+          {
+            "name": "kedaluwarsa",
+            "dataType": 2,
+            "intValue": 1343037600000
           },
           {
             "name": "berat",
             "dataType": 2,
-            "intValue": 247096000
+            "intValue": 50000000
           },
           {
             "name": "lokasi",
@@ -41,17 +46,22 @@
           {
             "name": "varietas",
             "dataType": 1,
-            "stringValue": "STV"
+            "stringValue": "Ketan"
           },
           {
-            "name": "tglkemas",
+            "name": "tglprod",
             "dataType": 2,
-            "intValue": 672000
+            "intValue": 1406129874000
+          },
+          {
+            "name": "kedaluwarsa",
+            "dataType": 2,
+            "intValue": 1469268000000
           },
           {
             "name": "berat",
             "dataType": 2,
-            "intValue": 7826000
+            "intValue": 10000000
           },
           {
             "name": "lokasi",
@@ -72,17 +82,22 @@
           {
             "name": "varietas",
             "dataType": 1,
-            "stringValue": "SPW"
+            "stringValue": "IR42"
           },
           {
-            "name": "tglkemas",
+            "name": "tglprod",
             "dataType": 2,
-            "intValue": 20567000
+            "intValue": 1406111874000
+          },
+          {
+            "name": "kedaluwarsa",
+            "dataType": 2,
+            "intValue": 1469268000000
           },
           {
             "name": "berat",
             "dataType": 2,
-            "intValue": 57243980000
+            "intValue": 5000000
           },
           {
             "name": "lokasi",

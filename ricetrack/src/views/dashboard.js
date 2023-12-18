@@ -20,12 +20,12 @@ const m = require('mithril');
 
 const text = {
   welcome: 'Selamat datang di',
-  berasChain: 'BerasChain',
+  berasChain: 'RiceTrack',
   blurb1: ' dibangun menggunakan teknologi blockchain Hyperledger Sawtooth untuk melacak rantai pasok beras mulai dari asal-usul, ' +
     'penyimpanan, pengangkutan dan penjualan beras dari petani sampai konsumen.',
-  startBlurb: 'Untuk menggunakan BerasChain, buat akun dengan mengklik tombol Masuk di bilah navigasi atas. ' +
-    'Setelah masuk, Anda dapat menambahkan produk beras ke BerasChain, melacak lokasi terkini dan riwayat perpindahan kepemilikannya. ' +
-    'Selain itu, Anda dapat memberi izin kepada pengelola lain di BerasChain untuk melacak atau mengalihkan kepemilikan beras tersebut kepada pihak lain dalam rantai pasok.'
+  startBlurb: 'Untuk menggunakan RiceTrack, buat akun dengan mengklik tombol Masuk di bilah navigasi atas. ' +
+    'Setelah masuk, Anda dapat menambahkan produk beras ke RiceTrack, melacak lokasi terkini dan riwayat perpindahan kepemilikannya. ' +
+    'Selain itu, Anda dapat memberi izin kepada pengelola lain di RiceTrack untuk melacak atau mengalihkan kepemilikan beras tersebut kepada pihak lain dalam rantai pasok.'
 };
 
 const Dashboard = {

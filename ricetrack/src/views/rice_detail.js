@@ -17,6 +17,16 @@ const {
   isReporter
 } = require('../utils/records')
 
+const _formatDateTime = (timestamp) => {
+  const seconds = timestamp / 1000 // Konversi dari milidetik ke detik
+  return moment.unix(seconds).format('DD-MM-YYYY HH:mm')
+}
+
+const _formatDate = (timestamp) => {
+  const seconds = timestamp / 1000; // Konversi dari milidetik ke detik
+  return moment.unix(seconds).format('DD-MM-YYYY')
+}
+
 /**
  * Possible selection options
  */
@@ -548,7 +558,7 @@ const RiceDetail = {
         _row(_labelProperty('Varietas', getPropertyValue(record, 'varietas'))),
 
         _row(
-          _labelProperty('Tanggal Pengemasan', parsing.toFloat(getPropertyValue(record, 'tglkemas', 0))),
+          _row(_labelProperty('Tanggal Produksi', _formatDateTime(getPropertyValue(record, 'tglprod', 0)))),
           _labelProperty('Berat (kg)', parsing.toFloat(getPropertyValue(record, 'berat', 0)))),
 
         _row(
@@ -560,22 +570,8 @@ const RiceDetail = {
            ? m(ReportLocation, { record, onsuccess: () => _loadData(record.recordId, vnode.state) })
            : null)),
 
-        _row(
-          _labelProperty(
-            'Kedaluwarsa',
-            _propLink(record, 'kedaluwarsa', _formatTemp(getPropertyValue(record, 'kedaluwarsa')))),
-          (isReporter(record, 'kedaluwarsa', publicKey) && !record.final
-          ? m(ReportValue,
-            {
-              name: 'kedaluwarsa',
-              label: 'Kedaluwarsa',
-              record,
-              typeField: 'intValue',
-              type: payloads.updateProperties.enum.INT,
-              xform: (x) => parsing.toInt(x),
-              onsuccess: () => _loadData(vnode.attrs.recordId, vnode.state)
-            })
-           : null)),
+           
+        _row(_labelProperty('Kedaluwarsa', _formatDate(getPropertyValue(record, 'kedaluwarsa', 0)))),
 
         _row(
           _labelProperty(

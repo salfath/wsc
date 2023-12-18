@@ -27,7 +27,7 @@ const {
   TransactionList
 } = require('sawtooth-sdk/protobuf')
 const modals = require('../components/modals')
-const api = require('../services/api')
+const api = require('./api')
 
 const STORAGE_KEY = 'rice_net.encryptedKey'
 const FAMILY_NAME = 'supply_chain'

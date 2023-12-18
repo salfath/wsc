@@ -54,16 +54,16 @@ WORKDIR /sawtooth-supply-chain
 
 # Install NPM dependencies to central location, link to individual components
 COPY bin/splice_json bin/
-COPY beraschain/package.json beraschain/
+COPY ricetrack/package.json ricetrack/
 COPY server/package.json server/
 
 RUN mkdir /node_deps \
   && bin/splice_json \
-    beraschain/package.json \
+    ricetrack/package.json \
     server/package.json \
     > /node_deps/package.json \
   && cd /node_deps && npm install && cd - \
-  && ln -s /node_deps/node_modules beraschain/ \
+  && ln -s /node_deps/node_modules ricetrack/ \
   && ln -s /node_deps/node_modules server/
 
 ENV PATH $PATH:/sawtooth-supply-chain/bin

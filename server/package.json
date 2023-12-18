@@ -11,9 +11,8 @@
     "watch": "nodemon index.js",
     "init": "node ./scripts/bootstrap_database.js",
     "test": "standard",
-    "make-rice": "DATA=\"../../beraschain/sample_data/core_types.json\" node ./scripts/seed_core_types.js",
-    "seed-sample-rice": "DATA=\"../../beraschain/sample_data/sample_data.json\" node ./scripts/seed_sample_data.js",
-    "update-sample-rice": "DATA=\"../../beraschain/sample_data/sample_updates.json\" node ./scripts/run_sample_updates.js"
+    "make-rice": "DATA=\"../../ricetrack/sample_data/core_types.json\" node ./scripts/seed_core_types.js",
+    "seed-sample-rice": "DATA=\"../../ricetrack/sample_data/sample_data.json\" node ./scripts/seed_sample_data.js"
   },
   "repository": {
     "type": "git",

@@ -18,12 +18,40 @@ const authorizableProperties = [
   ['shock', 'Shock']
 ]
 
+const varietasOptions = ['IR/Ciherang/Impari', 'Muncul', 'Mentik Wangi', 'IR42', 'Ketan'];
+
 /**
  * The Form for tracking a new rice.
  */
 const AddRice = {
   oninit (vnode) {
   
+    // Format current date and time in a "DD-MM-YYYY" HH:mm format
+    const now = new Date()
+    const day = String(now.getDate()).padStart(2, '0')
+    const month = String(now.getMonth() + 1).padStart(2, '0') // Bulan dimulai dari 0
+    const year = now.getFullYear()
+    const hours = String(now.getHours()).padStart(2, '0')
+    const minutes = String(now.getMinutes()).padStart(2, '0')
+
+    vnode.state.tglprod = `${day}-${month}-${year} ${hours}:${minutes}`
+
+    // Initialize Latitude and Longitude
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(position => {
+        vnode.state.latitude = position.coords.latitude || ''
+        vnode.state.longitude = position.coords.longitude || ''
+      }, () => {
+        vnode.state.latitude = ''
+        vnode.state.longitude = ''
+        console.error("Geolocation error or permission denied")
+      })
+    } else {
+      console.error("Geolocation is not supported by this browser")
+      vnode.state.latitude = ''
+      vnode.state.longitude = ''
+    }
+    
     // Initialize the empty reporters fields
     vnode.state.reporters = [
       {
@@ -39,13 +67,6 @@ const AddRice = {
   },
 
   view (vnode) {
-    // Initialize latitude and longitude if not already set
-    if (vnode.state.latitude === undefined) {
-      vnode.state.latitude = window.AppGlobals.currentLatitude;
-    }
-    if (vnode.state.longitude === undefined) {
-      vnode.state.longitude = window.AppGlobals.currentLongitude;
-    }
 
     return m('.rice_form',
              m('form', {
@@ -62,23 +83,29 @@ const AddRice = {
                }),
                value: vnode.state.serialNumber
              })),
-             _formGroup('Varietas', m('input.form-control', {
-               type: 'text',
-               oninput: m.withAttr('value', (value) => {
-                 vnode.state.varietas = value
-               }),
-               value: vnode.state.varietas
-             })),
+             
+             _formGroup('Varietas', 
+              m('select.form-control', {
+                onchange: m.withAttr('value', (value) => {
+                  vnode.state.varietas = value;
+                }),
+                value: vnode.state.varietas
+              }, [
+                m('option', { value: '', disabled: true, selected: true }, 'Pilih Varietas'),
+                varietasOptions.map((option) =>
+                  m('option', { value: option }, option)
+                )
+              ])
+            ),
 
              layout.row([
-               _formGroup('Kedaluwarsa', m('input.form-control', {
-                 type: 'number',
-                 min: 0,
-                 step: 'any',
+               _formGroup('Tanggal Produksi', m('input.form-control', {
+                 type: 'text',
+                 placeholder: 'DD-MM-YYYY HH:mm',                              
                  oninput: m.withAttr('value', (value) => {
-                   vnode.state.tglkemas = value
+                   vnode.state.tglprod = value
                  }),
-                 value: vnode.state.tglkemas
+                 value: vnode.state.tglprod
                })),
                _formGroup('Berat (kg)', m('input.form-control', {
                  type: 'number',
@@ -177,6 +204,33 @@ const _updateReporters = (vnode, reporterIndex) => {
  * Extract the appropriate values to pass to the create record transaction.
  */
 const _handleSubmit = (signingKey, state) => {
+
+  // Mengonversi 'DD-MM-YYYY HH:mm' ke format 'YYYY-MM-DDTHH:mm'
+  const parts = state.tglprod.split(" ")
+  const dateParts = parts[0].split("-")
+  const formattedDate = `${dateParts[2]}-${dateParts[1]}-${dateParts[0]}T${parts[1]}`
+
+  // Konversi string tanggal yang sudah diformat ke timestamp Tanggal Produksi
+  const tglprodTimestamp = new Date(formattedDate).getTime()
+  // Pastikan hasilnya adalah angka yang valid
+  if (isNaN(tglprodTimestamp)) {
+    alert("Format tanggal tidak valid. Gunakan format DD-MM-YYYY HH:mm")
+    return
+  }
+
+  // Konversi string tanggal yang sudah diformat ke objek Date untuk menghitung Kedaluwarsa
+  const tglprodDate = new Date(formattedDate)
+  // Pastikan hasilnya adalah tanggal yang valid
+  if (isNaN(tglprodDate.getTime())) {
+    alert("Format tanggal produksi tidak valid. Gunakan format DD-MM-YYYY HH:mm")
+    return
+  }
+  // Hitung tanggal kedaluwarsa (2 tahun setelah tglprod)
+  const kedaluwarsaDate = new Date(tglprodDate)
+  kedaluwarsaDate.setFullYear(kedaluwarsaDate.getFullYear() + 2)
+  // Konversi tanggal kedaluwarsa ke timestamp atau format yang diinginkan
+  const kedaluwarsaTimestamp = kedaluwarsaDate.getTime()
+
   const recordPayload = payloads.createRecord({
     recordId: state.serialNumber,
     recordType: 'rice',
@@ -187,8 +241,13 @@ const _handleSubmit = (signingKey, state) => {
         dataType: payloads.createRecord.enum.STRING
       },
       {
-        name: 'tglkemas',
-        intValue: parsing.toInt(state.tglkemas),
+        name: 'tglprod',
+        intValue: tglprodTimestamp,
+        dataType: payloads.createRecord.enum.INT
+      },
+      {
+        name: 'kedaluwarsa',
+        intValue: kedaluwarsaTimestamp,
         dataType: payloads.createRecord.enum.INT
       },
       {

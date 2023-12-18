@@ -1,26 +1,8 @@
-/**
- * Copyright 2017 Intel Corporation
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ----------------------------------------------------------------------------
- */
 'use strict';
 
 const m = require('mithril');
 
 const text = {
-  welcome: 'Selamat datang di',
-  riceTrack: 'RiceTrack',
   blurb1: ' dibangun menggunakan teknologi blockchain Hyperledger Sawtooth untuk melacak rantai pasok beras mulai dari asal-usul, ' +
     'penyimpanan, pengangkutan dan penjualan beras dari petani sampai konsumen.',
   startBlurb: 'Untuk menggunakan RiceTrack, buat akun dengan mengklik tombol Masuk di bilah navigasi atas. ' +
@@ -32,12 +14,17 @@ const Dashboard = {
   view (vnode) {
     return [
       m('.header.text-center.mb-4',
-        m('h4', text.welcome),
-        m('h1.mb-3', text.riceTrack)),
-      m('.blurb',
+        m('img', {src: '/images/RiceTrack.png', alt: 'RiceTrack', style: 'max-width: 20%; height: auto;'})),
+      m('.blurb.container',
         m('p.text-justify',
-          m('strong', text.riceTrack), text.blurb1),
+          m('strong', 'RiceTrack'), text.blurb1),
         m('p.text-justify', text.startBlurb)
+      ),
+      m('.powered-by.text-center',
+        m('p', 
+          { style: 'font-size: 24px; color: #00008B; margin-bottom: 0;' }, 
+          'Powered By'),
+        m('img', {src: '/images/sawtooth.png', alt: 'Hyperledger Sawtooth', style: 'max-width: 20%; height: auto; margin-top: 5px;'}) // Mengurangi margin
       )
     ];
   }

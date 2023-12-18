@@ -20,7 +20,7 @@ const m = require('mithril');
 
 const text = {
   welcome: 'Selamat datang di',
-  berasChain: 'RiceTrack',
+  riceTrack: 'RiceTrack',
   blurb1: ' dibangun menggunakan teknologi blockchain Hyperledger Sawtooth untuk melacak rantai pasok beras mulai dari asal-usul, ' +
     'penyimpanan, pengangkutan dan penjualan beras dari petani sampai konsumen.',
   startBlurb: 'Untuk menggunakan RiceTrack, buat akun dengan mengklik tombol Masuk di bilah navigasi atas. ' +
@@ -33,10 +33,10 @@ const Dashboard = {
     return [
       m('.header.text-center.mb-4',
         m('h4', text.welcome),
-        m('h1.mb-3', text.berasChain)),
+        m('h1.mb-3', text.riceTrack)),
       m('.blurb',
         m('p.text-justify',
-          m('strong', text.berasChain), text.blurb1),
+          m('strong', text.riceTrack), text.blurb1),
         m('p.text-justify', text.startBlurb)
       )
     ];

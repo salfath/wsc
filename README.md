@@ -1,5 +1,5 @@
 
-# Sawtooth Supply Chain
+# RiceTrack
 
 This prototype is a distributed application powered by Hyperledger Sawtooth to track and manage the
 supply chain of:

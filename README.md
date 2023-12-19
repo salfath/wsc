@@ -1,11 +1,9 @@
 
-![Buxton Supply Chain](images/cover.png)
-
-# Sawtooth Supply Chain
+# RiceTrack
 
 This prototype is a distributed application powered by Hyperledger Sawtooth to track and manage the
 supply chain of:
-- Wine
+- Rice
 
 The user can easiliy create a product and link it to the blockchain. The user
 can track the product by its data such as serial number, location or type. Also,
@@ -26,14 +24,14 @@ can track the product by its data such as serial number, location or type. Also,
 You can find Architectural UML Diagrams [here](https://github.com/CarlosRoldanx/Buxton/tree/master/UML%20Diagrams). 
  
 ## Use Case
-A "Wine" company can access the prototype and register ad administrator. Then,
+A Rice Milling company can access the prototype and register an administrator. Then,
  an adminsitrator can create a product tracking record. When the product is sent 
  from point A to B, the custodianship of the product can be moved too. The 
  ownership remaind to the owner, and each administrator can update the product
- with the wine state such as temperature or location.
+ with the rice state such as temperature or location.
  
- This can be used by the end-user to track the wine or by the wine company to
-  track the wine.
+ This can be used by the end-user to track the rice or by the rice company to
+  track the rice.
   
 ## Set up
   

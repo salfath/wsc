@@ -132,25 +132,6 @@ document.addEventListener('DOMContentLoaded', () => {
   })
 })
 
-// In a common file, e.g., globals.js
-window.AppGlobals = {
-  currentLatitude: null,
-  currentLongitude: null
-};
-
-function fetchCurrentPosition() {
-  if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(position => {
-      window.AppGlobals.currentLatitude = position.coords.latitude;
-      window.AppGlobals.currentLongitude = position.coords.longitude;
-    }, error => {
-      console.error("Error getting location: ", error);
-    });
-  } else {
-    console.error("Geolocation is not supported by this browser.");
-  }
-}
-
 document.addEventListener('DOMContentLoaded', (event) => {
   fetchCurrentPosition();
 });

@@ -44,7 +44,7 @@ RUN npm install
 
 #Copy client sample data for script use
 COPY asset_client/sample_data/ ../asset_client/sample_data/
-COPY beraschain/sample_data/ ../beraschain/sample_data/
+COPY ricetrack/sample_data/ ../ricetrack/sample_data/
 
 COPY protos/ ../protos/
 COPY server/ .

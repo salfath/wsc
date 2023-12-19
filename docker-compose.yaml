@@ -25,7 +25,7 @@ services:
       dockerfile: shell/Dockerfile
     volumes:
       - .:/sawtooth-supply-chain
-      - /sawtooth-supply-chain/beraschain/node_modules
+      - /sawtooth-supply-chain/ricetrack/node_modules
       - /sawtooth-supply-chain/server/node_modules
     depends_on:
       - rethink
@@ -37,7 +37,7 @@ services:
     command: |
       bash -c "
         protogen &&
-        cd beraschain/ && npm run build && cd - &&
+        cd ricetrack/ && npm run build && cd - &&
         if [ ! -f /root/.sawtooth/keys/root.priv ]; then
           sawtooth keygen &&
           cd server/ &&
@@ -108,12 +108,12 @@ services:
       - VALIDATOR_URL=tcp://validator:4004
       - DB_HOST=rethink
 
-  beraschain:
-    image: supply-beraschain
-    container_name: supply-beraschain
+  ricetrack:
+    image: supply-ricetrack
+    container_name: supply-ricetrack
     build: 
       context: .
-      dockerfile: beraschain/Dockerfile-installed
+      dockerfile: ricetrack/Dockerfile-installed
     expose:
       - 80
     ports:

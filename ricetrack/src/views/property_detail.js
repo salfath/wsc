@@ -29,15 +29,6 @@ const typedWidget = state => {
     return m(LineGraphWidget, { updates: property.updates })
   }
 
-  if (property.name === 'tilt') {
-    return m(LineGraphWidget, {
-      updates: property.updates.map(update => {
-        const amplitude = Math.sqrt(update.value.x ** 2 + update.value.y ** 2)
-        return _.assign({}, update, {value: amplitude.toFixed(3)})
-      })
-    })
-  }
-
   if (property.name === 'shock') {
     return m(LineGraphWidget, {
       updates: property.updates.map(update => {
@@ -59,8 +50,8 @@ const updateSubmitter = state => e => {
   let value = null
   if (state.update) {
     value = state.update
-  } else if (name === 'tilt' || name === 'shock') {
-    value = JSON.stringify(state.tmp)
+  } else if (name === 'harga') {
+    value = parseInt(state.tmp.harga.replace(/^Rp\./, '').replace(/\./g, ''), 10);
   } else {
     value = state.tmp
   }
@@ -87,7 +78,7 @@ const updateSubmitter = state => e => {
     })
 }
 
-// Produces custom input fields for location, tilt, and shock
+// Produces custom input fields for location, harga, and shock
 const typedInput = state => {
   const { dataType, name } = state.property
 
@@ -116,20 +107,22 @@ const typedInput = state => {
     ]
   }
 
-  if (name === 'tilt') {
-    return [
-      m('.col.md-4.mr-1',
-        m('input.form-control', {
-          placeholder: 'Enter X...',
-          oninput: withIntVal(value => { state.tmp.x = value })
-        })),
-      m('.col.md-4',
-        m('input.form-control', {
-          placeholder: 'Enter Y...',
-          oninput: withIntVal(value => { state.tmp.y = value })
-        }))
-    ]
+  if (name === 'harga') {
+    return m('.col.md-8',
+      m('input.form-control', {
+        placeholder: 'Rp.0',
+        oninput: m.withAttr('value', value => {
+          // Format the input to include "Rp." and thousand separators
+          state.tmp.harga = formatCurrencyInput(value);
+        }),
+        value: state.tmp.harga
+      }))
   }
+  const formatCurrencyInput = (value) => {
+    let numericValue = value.replace(/^Rp\./, '').replace(/\./g, '');
+    let formattedValue = parseInt(numericValue, 10).toLocaleString('id-ID');
+    return 'Rp.' + formattedValue;
+  };
 
   if (name === 'shock') {
     return [

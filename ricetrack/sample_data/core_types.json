@@ -28,8 +28,9 @@
           "required": true
         },
         {
-          "name": "tilt",
-          "dataType": 1
+          "name": "harga",
+          "dataType": 2,
+          "required": true
         },
         {
           "name": "shock",

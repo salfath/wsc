@@ -33,7 +33,7 @@ const _formatDate = (timestamp) => {
 const authorizableProperties = [
   ['lokasi', 'Lokasi'],
   ['kedaluwarsa', 'Kedaluwarsa'],
-  ['tilt', 'Tilt'],
+  ['harga', 'Harga'],
   ['shock', 'Shock']
 ]
 
@@ -353,52 +353,53 @@ const ReportValue = {
   }
 }
 
-const ReportTilt = {
+const ReportHarga = {
+  oninit: (vnode) => {
+    vnode.state.value = vnode.attrs.initialValue || '';
+  },
+
   view: (vnode) => {
-    let onsuccess = vnode.attrs.onsuccess || (() => null)
-    return [
-      m('form', {
-        onsubmit: (e) => {
-          e.preventDefault()
-          _updateProperty(vnode.attrs.record, {
-            name: 'tilt',
-            stringValue: JSON.stringify({
-              x: parsing.toInt(vnode.state.x),
-              y: parsing.toInt(vnode.state.y)
-            }),
-            dataType: payloads.updateProperties.enum.STRING
-          })
-          .then(() => {
-            vnode.state.x = null
-            vnode.state.y = null
-          })
-          .then(onsuccess)
-        }
-      },
-      m('.form-row',
-        m('.col.md-4.mr-1',
-          m('input.form-control', {
-            placeholder: 'X...',
-            type: 'number',
-            step: 'any',
-            oninput: m.withAttr('value', (value) => {
-              vnode.state.x = value
-            })
-          })),
-        m('.col.md-4',
-          m('input.form-control', {
-            placeholder: 'Y...',
-            type: 'number',
-            step: 'any',
-            oninput: m.withAttr('value', (value) => {
-              vnode.state.y = value
-            })
-          })),
-        m('.col-2',
-          m('button.btn.btn-primary', 'Memperbarui'))))
-    ]
+    let onsuccess = vnode.attrs.onsuccess || (() => null);
+
+    return m('form', {
+      onsubmit: (e) => {
+        e.preventDefault();
+        const hargaValue = parseInt(vnode.state.value.replace(/[^0-9]/g, ''));
+        _updateProperty(vnode.attrs.record, {
+          name: 'harga',
+          intValue: hargaValue,
+          dataType: payloads.updateProperties.enum.INT
+        })
+        .then(() => {
+          vnode.state.value = '';
+        })
+        .then(onsuccess);
+      }
+    },
+    m('.form-row', [
+      m('.col-10', 
+        m('input.form-control[type="text"]', {
+          oninput: m.withAttr('value', (value) => {
+            vnode.state.value = formatCurrency(value);
+          }),
+          value: vnode.state.value
+        })
+      ),
+      m('.col-2', 
+        m('button.btn.btn-primary', 'Memperbarui')
+      )
+    ]));
   }
 }
+
+function formatCurrency(value) {
+  let numericValue = parseInt(value.replace(/[^0-9]/g, ''));
+  if (isNaN(numericValue)) {
+    numericValue = 0;
+  }
+  return `Rp. ${numericValue.toLocaleString('id')}`;
+}
+
 
 const ReportShock = {
   view: (vnode) => {
@@ -575,10 +576,10 @@ const RiceDetail = {
 
         _row(
           _labelProperty(
-            'Tilt',
-            _propLink(record, 'tilt', _formatValue(record, 'tilt'))),
-          (isReporter(record, 'tilt', publicKey) && !record.final
-           ? m(ReportTilt, {
+            'Harga',
+            _propLink(record, 'harga', _formatValue(record, 'harga'))),
+          (isReporter(record, 'harga', publicKey) && !record.final
+           ? m(ReportHarga, {
              record,
              onsuccess: () => _loadData(vnode.attrs.recordId, vnode.state)
            })

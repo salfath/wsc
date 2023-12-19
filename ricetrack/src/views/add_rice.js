@@ -14,7 +14,7 @@ const layout = require('../components/layout')
 const authorizableProperties = [
   ['lokasi', 'Lokasi'],
   ['kedaluwarsa', 'Kedaluwarsa'],
-  ['tilt', 'Tilt'],
+  ['harga', 'Harga'],
   ['shock', 'Shock']
 ]
 
@@ -116,6 +116,14 @@ const AddRice = {
                  value: vnode.state.berat
                }))
              ]),
+             
+             _formGroup('Harga (Rp)', m('input.form-control', {
+              type: 'text',
+              oninput: m.withAttr('value', (value) => {
+                vnode.state.harga = formatHargaInput(value);
+              }),
+              value: vnode.state.harga
+            })),
 
              layout.row([
                _formGroup('Garis Lintang', m('input.form-control', {
@@ -178,6 +186,11 @@ const AddRice = {
                    'Tambahkan')))))
   }
 }
+const formatHargaInput = (value) => {
+  let numericValue = value.replace(/^Rp\./, '').replace(/\./g, '')
+  let formattedValue = parseInt(numericValue, 10).toLocaleString('id-ID')
+  return 'Rp.' + formattedValue
+};
 
 /**
  * Update the reporter's values after a change occurs in the name of the
@@ -231,6 +244,8 @@ const _handleSubmit = (signingKey, state) => {
   // Konversi tanggal kedaluwarsa ke timestamp atau format yang diinginkan
   const kedaluwarsaTimestamp = kedaluwarsaDate.getTime()
 
+  const parsedHarga = parseInt(state.harga.replace(/^Rp\./, '').replace(/\./g, ''), 10);
+
   const recordPayload = payloads.createRecord({
     recordId: state.serialNumber,
     recordType: 'rice',
@@ -253,6 +268,11 @@ const _handleSubmit = (signingKey, state) => {
       {
         name: 'berat',
         intValue: parsing.toInt(state.berat),
+        dataType: payloads.createRecord.enum.INT
+      },
+      {
+        name: 'harga',
+        intValue: parsedHarga,
         dataType: payloads.createRecord.enum.INT
       },
       {

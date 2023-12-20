@@ -1,19 +1,3 @@
-/**
- * Copyright 2017 Intel Corporation
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ----------------------------------------------------------------------------
- */
 'use strict'
 
 // These requires inform webpack which styles to build
@@ -30,11 +14,13 @@ const AddRice = require('./views/add_rice')
 const AgentDetailPage = require('./views/agent_detail')
 const AgentList = require('./views/list_agents')
 const RiceList = require('./views/list_rice')
+const RiceUpdates = require('./views/rice_updates')
 const RiceDetail = require('./views/rice_detail')
 const Dashboard = require('./views/dashboard')
 const LoginForm = require('./views/login_form')
 const PropertyDetailPage = require('./views/property_detail')
 const SignupForm = require('./views/signup_form')
+
 
 /**
  * A basic layout component that adds the navbar to the view.
@@ -77,7 +63,7 @@ const loggedOutNav = () => {
  */
 const resolve = (view, restricted = false) => {
   const resolver = {}
-
+  console.log("Resolving route for", view.name)
   if (restricted) {
     resolver.onmatch = () => {
       if (api.getAuth()) return view
@@ -123,6 +109,7 @@ document.addEventListener('DOMContentLoaded', () => {
     '/agents': resolve(AgentList),
     '/create': resolve(AddRice, true),
     '/rice/:recordId': resolve(RiceDetail),
+    '/rice-updates/:recordId': resolve(RiceUpdates),
     '/rice': resolve(RiceList),
     '/login': resolve(LoginForm),
     '/logout': { onmatch: logout },
@@ -131,6 +118,18 @@ document.addEventListener('DOMContentLoaded', () => {
     '/signup': resolve(SignupForm)
   })
 })
+
+function fetchCurrentPosition() {
+  if ('geolocation' in navigator) {
+    navigator.geolocation.getCurrentPosition(function(position) {
+      console.log(position.coords.latitude, position.coords.longitude);
+      // Do something with the position here
+    });
+  } else {
+    console.log("Geolocation is not available.");
+    // Handle the lack of geolocation capability
+  }
+}
 
 document.addEventListener('DOMContentLoaded', (event) => {
   fetchCurrentPosition();

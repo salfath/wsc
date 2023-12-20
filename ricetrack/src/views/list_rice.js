@@ -37,6 +37,11 @@ const RiceList = {
 
   view (vnode) {
     let publicKey = api.getPublicKey()
+
+    vnode.state.filteredRecords.forEach(rec => {
+      console.log(`Record ID: ${rec.recordId}, Updates Link: /rice-updates/${rec.recordId}`)
+    })
+    
     return [
       m('.rice-table',
         m('.row.btn-row.mb-2', _controlButtons(vnode, publicKey)),
@@ -60,7 +65,9 @@ const RiceList = {
                   // added on the initial create
                   formatTimestamp(getOldestPropertyUpdateTime(rec)),
                   formatTimestamp(getLatestPropertyUpdateTime(rec)),
-                  countPropertyUpdates(rec)
+                  m(`a[href=/rice-updates/${rec.recordId}]`, {
+                    oncreate: m.route.link
+                  }, countPropertyUpdates(rec).toString())
                 ]),
           noRowsText: 'No records found'
         })

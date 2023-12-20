@@ -1,0 +1,21 @@
+{
+  "short_name": "RiceTrack",
+  "name": "RiceTrack",
+  "theme_color": "#008000",
+  "icons": [
+    {
+      "src": "/images/RT192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/images/RT512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "start_url": "/",
+  "background_color": "#FFFFFF",
+  "display": "standalone",
+  "scope": "/"
+}

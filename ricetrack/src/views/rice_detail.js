@@ -293,8 +293,6 @@ const ReportLocation = {
             onchange: m.withAttr('value', (value) => {
               vnode.state.latitude = value
             }),
-            //value: vnode.state.latitude,
-            //placeholder: 'Latitude..'
           })),
         m('.form-group.col-5',
           m('label.sr-only', { 'for': 'longitude' }, 'Garis Bujur'),
@@ -572,18 +570,17 @@ const RiceDetail = {
            : null)),
 
            
-        _row(_labelProperty('Kedaluwarsa', _formatDate(getPropertyValue(record, 'kedaluwarsa', 0)))),
-
         _row(
+          _labelProperty('Kedaluwarsa', _formatDate(getPropertyValue(record, 'kedaluwarsa', 0))),
           _labelProperty(
             'Harga',
-            _propLink(record, 'harga', _formatValue(record, 'harga'))),
+            _propLink(record, 'harga', _formatValue(record, 'harga')),
           (isReporter(record, 'harga', publicKey) && !record.final
            ? m(ReportHarga, {
              record,
              onsuccess: () => _loadData(vnode.attrs.recordId, vnode.state)
            })
-           : null)),
+           : null))),
 
         _row(m(ReporterControl, {
           record,

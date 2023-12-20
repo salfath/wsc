@@ -64,11 +64,29 @@ const countPropertyUpdates = (record) => {
   return Object.values(record.updates.properties).reduce(
     (sum, updates) => sum + updates.length, 0)
 }
+const getPropertyUpdates = (record) => {
+  const updatesList = [];
+
+  if (record.updates && record.updates.properties) {
+    Object.entries(record.updates.properties).forEach(([propName, updates]) => {
+      updates.forEach(update => {
+        updatesList.push({
+          propertyName: propName,
+          timestamp: update.timestamp,
+          updatedValue: update.value // Assuming 'value' is the updated value
+        });
+      });
+    });
+  }
+
+  return updatesList;
+};
 
 module.exports = {
   getPropertyValue,
   isReporter,
   getLatestPropertyUpdateTime,
   getOldestPropertyUpdateTime,
-  countPropertyUpdates
+  countPropertyUpdates,
+  getPropertyUpdates
 }

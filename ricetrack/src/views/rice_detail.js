@@ -255,9 +255,29 @@ const _propLink = (record, propName, content) =>
 
 const ReportLocation = {
   oninit: (vnode) => {
-    // Set default values from window.AppGlobals
-    vnode.state.latitude = window.AppGlobals.currentLatitude || '';
-    vnode.state.longitude = window.AppGlobals.currentLongitude || '';
+    // Initialize the state with empty values
+    vnode.state.latitude = '';
+    vnode.state.longitude = '';
+
+    // Function to get current location
+    const getCurrentLocation = () => {
+      if ('geolocation' in navigator) {
+        navigator.geolocation.getCurrentPosition((position) => {
+          vnode.state.latitude = position.coords.latitude.toFixed(6);
+          vnode.state.longitude = position.coords.longitude.toFixed(6);
+          m.redraw(); // Redraw the component with new state values
+        }, (error) => {
+          console.error('Error getting location:', error);
+          vnode.state.latitude = '';
+          vnode.state.longitude = '';
+        });
+      } else {
+        console.error('Geolocation is not supported by this browser.');
+      }
+    };
+
+    // Get the current location
+    getCurrentLocation();
   },
 
   view: (vnode) => {
@@ -310,138 +330,6 @@ const ReportLocation = {
             //placeholder: 'Longitude..'
           })),
 
-        m('.col-2',
-          m('button.btn.btn-primary', 'Memperbarui'))))
-    ]
-  }
-}
-
-const ReportValue = {
-  view: (vnode) => {
-    let onsuccess = vnode.attrs.onsuccess || (() => null)
-    let xform = vnode.attrs.xform || ((x) => x)
-    return [
-      m('form', {
-        onsubmit: (e) => {
-          e.preventDefault()
-          _updateProperty(vnode.attrs.record, {
-            name: vnode.attrs.name,
-            [vnode.attrs.typeField]: xform(vnode.state.value),
-            dataType: vnode.attrs.type
-          }).then(() => {
-            vnode.state.value = ''
-          })
-          .then(onsuccess)
-        }
-      },
-        m('.form-row',
-          m('.form-group.col-10',
-            m('label.sr-only', { 'for': vnode.attrs.name }, vnode.attrs.label),
-            m("input.form-control[type='text']", {
-              name: vnode.attrs.name,
-              onchange: m.withAttr('value', (value) => {
-                vnode.state.value = value
-              }),
-              value: vnode.state.value,
-              placeholder: vnode.attrs.label
-            })),
-         m('.col-2',
-           m('button.btn.btn-primary', 'Memperbarui'))))
-    ]
-  }
-}
-
-const ReportHarga = {
-  oninit: (vnode) => {
-    vnode.state.value = vnode.attrs.initialValue || '';
-  },
-
-  view: (vnode) => {
-    let onsuccess = vnode.attrs.onsuccess || (() => null);
-
-    return m('form', {
-      onsubmit: (e) => {
-        e.preventDefault();
-        const hargaValue = parseInt(vnode.state.value.replace(/[^0-9]/g, ''));
-        _updateProperty(vnode.attrs.record, {
-          name: 'harga',
-          intValue: hargaValue,
-          dataType: payloads.updateProperties.enum.INT
-        })
-        .then(() => {
-          vnode.state.value = '';
-        })
-        .then(onsuccess);
-      }
-    },
-    m('.form-row', [
-      m('.col-10', 
-        m('input.form-control[type="text"]', {
-          oninput: m.withAttr('value', (value) => {
-            vnode.state.value = formatCurrency(value);
-          }),
-          value: vnode.state.value
-        })
-      ),
-      m('.col-2', 
-        m('button.btn.btn-primary', 'Memperbarui')
-      )
-    ]));
-  }
-}
-
-function formatCurrency(value) {
-  let numericValue = parseInt(value.replace(/[^0-9]/g, ''));
-  if (isNaN(numericValue)) {
-    numericValue = 0;
-  }
-  return `Rp. ${numericValue.toLocaleString('id')}`;
-}
-
-
-const ReportShock = {
-  view: (vnode) => {
-    let onsuccess = vnode.attrs.onsuccess || (() => null)
-    return [
-      m('form', {
-        onsubmit: (e) => {
-          e.preventDefault()
-          _updateProperty(vnode.attrs.record, {
-            name: 'shock',
-            stringValue: JSON.stringify({
-              accel: parsing.toInt(vnode.state.accel),
-              duration: parsing.toInt(vnode.state.duration)
-            }),
-            dataType: payloads.updateProperties.enum.STRING
-          })
-          .then(() => {
-            vnode.state.accel = null
-            vnode.state.duration = null
-          })
-          .then(onsuccess)
-        }
-      },
-      m('.form-row',
-        m('.col.md-4.mr-1',
-          m('input.form-control', {
-            placeholder: 'Percepatan...',
-            type: 'number',
-            step: 'any',
-            min: 0,
-            oninput: m.withAttr('value', (value) => {
-              vnode.state.accel = value
-            })
-          })),
-        m('.col.md-4',
-          m('input.form-control', {
-            placeholder: 'Durasi...',
-            type: 'number',
-            step: 'any',
-            min: 0,
-            oninput: m.withAttr('value', (value) => {
-              vnode.state.duration = value
-            })
-          })),
         m('.col-2',
           m('button.btn.btn-primary', 'Memperbarui'))))
     ]
@@ -573,14 +461,8 @@ const RiceDetail = {
         _row(
           _labelProperty('Kedaluwarsa', _formatDate(getPropertyValue(record, 'kedaluwarsa', 0))),
           _labelProperty(
-            'Harga',
-            _propLink(record, 'harga', _formatValue(record, 'harga')),
-          (isReporter(record, 'harga', publicKey) && !record.final
-           ? m(ReportHarga, {
-             record,
-             onsuccess: () => _loadData(vnode.attrs.recordId, vnode.state)
-           })
-           : null))),
+            'Harga', vnode.state.record ? _formatValue(vnode.state.record, 'harga') : 'Loading...'
+          )),
 
         _row(m(ReporterControl, {
           record,
@@ -609,7 +491,7 @@ const RiceDetail = {
 const _formatValue = (record, propName) => {
   let prop = getPropertyValue(record, propName)
   if (prop) {
-    return parsing.stringifyValue(parsing.floatifyValue(prop), '***', propName)
+    return `Rp ${parseInt(prop).toLocaleString('id')}`;
   } else {
     return 'N/A'
   }
@@ -623,14 +505,6 @@ const _formatLocation = (lokasi) => {
   } else {
     return 'Unknown'
   }
-}
-
-const _formatTemp = (temp) => {
-  if (temp !== undefined && temp !== null) {
-    return `${parsing.toFloat(temp)} °C`
-  }
-
-  return 'Unknown'
 }
 
 const _formatTimestamp = (sec) => {

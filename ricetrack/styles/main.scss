@@ -4,5 +4,57 @@
   width: 100%;
 }
 
+/* Table Styles */
+.table-updates {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 20px 0;
+}
+
+.table-updates th, 
+.table-updates td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+}
+
+.table-updates th {
+  background-color: #f2f2f2;
+}
+
+.table-updates tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+.table-updates tr:hover {
+  background-color: #eaeaea;
+}
+
+/* list rice Styles */
+.rice-table table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 20px 0;
+}
+
+.rice-table th, 
+.rice-table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+}
+
+.rice-table th {
+  background-color: #f2f2f2;
+}
+
+.rice-table tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+.rice-table tr:hover {
+  background-color: #eaeaea;
+}
+
 @import "~bootstrap/scss/bootstrap";
 @import "~octicons/build/octicons.min";

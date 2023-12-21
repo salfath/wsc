@@ -45,32 +45,31 @@ const RiceList = {
     return [
       m('.rice-table',
         m('.row.btn-row.mb-2', _controlButtons(vnode, publicKey)),
-        m(Table, {
-          headers: [
-            'Nomor Seri',
-            'Varietas',
-            'Dibuat',
-            'Diubah',
-            'Perubahan'
-          ],
-          rows: vnode.state.filteredRecords.slice(
-            vnode.state.currentPage * PAGE_SIZE,
-            (vnode.state.currentPage + 1) * PAGE_SIZE)
-                .map((rec) => [
-                  m(`a[href=/rice/${rec.recordId}]`, {
-                    oncreate: m.route.link
-                  }, truncate(rec.recordId, { length: 32 })),
-                  getPropertyValue(rec, 'varietas'),
-                  // This is the "created" time, synthesized from properties
-                  // added on the initial create
-                  formatTimestamp(getOldestPropertyUpdateTime(rec)),
-                  formatTimestamp(getLatestPropertyUpdateTime(rec)),
-                  m(`a[href=/rice-updates/${rec.recordId}]`, {
-                    oncreate: m.route.link
-                  }, countPropertyUpdates(rec).toString())
-                ]),
-          noRowsText: 'No records found'
-        })
+        m('table', [
+          m('thead', 
+            m('tr', [
+              m('th', 'Nomor Seri'),
+              m('th', 'Varietas'),
+              m('th', 'Dibuat'),
+              m('th', 'Diubah'),
+              m('th', 'Perubahan')
+            ])
+          ),
+          m('tbody', 
+            vnode.state.filteredRecords.slice(
+              vnode.state.currentPage * PAGE_SIZE,
+              (vnode.state.currentPage + 1) * PAGE_SIZE
+            ).map((rec) => 
+              m('tr', [
+                m('td', m(`a[href=/rice/${rec.recordId}]`, { oncreate: m.route.link }, truncate(rec.recordId, { length: 32 }))),
+                m('td', getPropertyValue(rec, 'varietas')),
+                m('td', formatTimestamp(getOldestPropertyUpdateTime(rec))),
+                m('td', formatTimestamp(getLatestPropertyUpdateTime(rec))),
+                m('td', m(`a[href=/rice-updates/${rec.recordId}]`, { oncreate: m.route.link }, countPropertyUpdates(rec).toString()))
+              ])
+            )
+          )
+        ])
       )
     ]
   }

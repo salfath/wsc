@@ -83,14 +83,7 @@ const typedInput = state => {
   const { dataType, name } = state.property
 
   if (dataType === 'LOCATION') {
-    // Initialize state with current location if not already set
-    if (state.tmp.latitude === undefined) {
-      state.tmp.latitude = window.AppGlobals.currentLatitude;
-    }
-    if (state.tmp.longitude === undefined) {
-      state.tmp.longitude = window.AppGlobals.currentLongitude;
-    }
-
+    
     return [
       m('.col.md-4.mr-1',
         m('input.form-control', {
@@ -173,6 +166,26 @@ const PropertyDetailPage = {
   oninit (vnode) {
     vnode.state.currentPage = 0
     vnode.state.tmp = {}
+
+    // Method to get current location
+    const getCurrentLocation = () => {
+      if ('geolocation' in navigator) {
+        navigator.geolocation.getCurrentPosition((position) => {
+          vnode.state.tmp.latitude = position.coords.latitude.toFixed(6);
+          vnode.state.tmp.longitude = position.coords.longitude.toFixed(6);
+          m.redraw();
+        }, (error) => {
+          console.error('Error getting location:', error);
+          vnode.state.tmp.latitude = '';
+          vnode.state.tmp.longitude = '';
+        });
+      } else {
+        console.error('Geolocation is not supported by this browser.');
+      }
+    };
+
+    // Get the current location
+    getCurrentLocation();
 
     const refresh = () => {
       api.get(`records/${vnode.attrs.recordId}/${vnode.attrs.name}`)

@@ -70,8 +70,6 @@ const RiceUpdates = {
       console.log(`Formatted location ${JSON.stringify(location)} to ${formatted}`);
       return formatted;
     };
-
-   
    
     const findAgentNameByKey = (key) => {
       const agent = vnode.state.agents.find(agent => agent.key === key);

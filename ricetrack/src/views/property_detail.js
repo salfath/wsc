@@ -44,39 +44,45 @@ const typedWidget = state => {
 }
 
 const updateSubmitter = state => e => {
-  e.preventDefault()
-  const { name, dataType, recordId } = state.property
+  e.preventDefault();
+  const { name, dataType, recordId } = state.property;
 
-  let value = null
+  let value = null;
   if (state.update) {
-    value = state.update
+    value = state.update;
   } else if (name === 'harga') {
     value = parseInt(state.tmp.harga.replace(/^Rp\./, '').replace(/\./g, ''), 10);
+  } else if (dataType === 'LOCATION') {
+    // Convert latitude and longitude to millionths for LOCATION dataType
+    value = {
+      latitude: parseInt(state.tmp.latitude * 1000000, 10),
+      longitude: parseInt(state.tmp.longitude * 1000000, 10)
+    };
   } else {
-    value = state.tmp
+    value = state.tmp;
   }
 
-  const update = { name }
-  update.dataType = payloads.updateProperties.enum[dataType]
-  update[`${dataType.toLowerCase()}Value`] = value
+  const update = { name };
+  update.dataType = payloads.updateProperties.enum[dataType];
+  update[`${dataType.toLowerCase()}Value`] = value;
 
   const payload = payloads.updateProperties({
     recordId,
     properties: [update]
-  })
+  });
 
   transactions.submit(payload, true)
     .then(() => api.get(`records/${recordId}/${name}`))
     .then(property => {
-      _.each(e.target.elements, el => { el.value = null })
-      state.update = null
-      state.tmp = {}
+      _.each(e.target.elements, el => { el.value = null; })
+      state.update = null;
+      state.tmp = {};
       property.updates.forEach(update => {
-        update.value = parsing.floatifyValue(update.value)
-      })
-      state.property = property
-    })
-}
+        update.value = parsing.floatifyValue(update.value);
+      });
+      state.property = property;
+    });
+};
 
 // Produces custom input fields for location, harga, and shock
 const typedInput = state => {

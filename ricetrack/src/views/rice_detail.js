@@ -452,10 +452,7 @@ const RiceDetail = {
           _labelProperty(
             'Lokasi',
             _propLink(record, 'lokasi', _formatLocation(getPropertyValue(record, 'lokasi')))
-          ),
-          (isReporter(record, 'lokasi', publicKey) && !record.final
-           ? m(ReportLocation, { record, onsuccess: () => _loadData(record.recordId, vnode.state) })
-           : null)),
+          )),
 
            
         _row(

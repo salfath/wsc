@@ -32,9 +32,7 @@ const _formatDate = (timestamp) => {
  */
 const authorizableProperties = [
   ['lokasi', 'Lokasi'],
-  ['kedaluwarsa', 'Kedaluwarsa'],
   ['harga', 'Harga'],
-  ['shock', 'Shock']
 ]
 
 const _labelProperty = (label, value) => [
@@ -343,12 +341,12 @@ const AuthorizeReporter = {
 
   view (vnode) {
     return [
-      _row(m('strong', 'Otorisasi Administrator')),
+      _row(m('strong', 'Otorisasi Reporter')),
       m('.row',
         m('.col-6',
           m('input.form-control', {
             type: 'text',
-            placeholder: 'Tambahkan Administrator berdasarkan nama atau kunci publik..',
+            placeholder: 'Tambahkan Reporter berdasarkan nama atau kunci publik..',
             value: vnode.state.reporter,
             oninput: m.withAttr('value', (value) => {
               // clear any previously matched values
@@ -422,45 +420,23 @@ const RiceDetail = {
 
         _row(
           _labelProperty('Pemilik', _agentLink(owner)),
-          m(TransferControl, {
-            publicKey,
-            record,
-            agents: vnode.state.agents,
-            role: 'owner',
-            label: 'Pemilik',
-            onsuccess: () => _loadData(vnode.attrs.recordId, vnode.state)
-          })),
+          _labelProperty('Administrator', _agentLink(custodian))),
 
         _row(
-          _labelProperty('Administrator', _agentLink(custodian)),
-          m(TransferControl, {
-            publicKey,
-            record,
-            agents: vnode.state.agents,
-            role: 'custodian',
-            label: 'Administrator',
-            onsuccess: () => _loadData(vnode.attrs.recordId, vnode.state)
-          })),
-
-        _row(_labelProperty('Varietas', getPropertyValue(record, 'varietas'))),
+          _labelProperty('Tanggal Transaksi Terakhir', _formatDateTime(getPropertyValue(record, 'tgltransaksi', 0))),
+          _labelProperty('Kedaluwarsa', _formatDate(getPropertyValue(record, 'kedaluwarsa', 0)))),
+    
+        _row(
+          _labelProperty('Varietas', getPropertyValue(record, 'varietas')),
+          _labelProperty('Berat (kg)', getPropertyValue(record, 'berat', 0))),
 
         _row(
-          _row(_labelProperty('Tanggal Produksi', _formatDateTime(getPropertyValue(record, 'tglprod', 0)))),
-          _labelProperty('Berat (kg)', parsing.toFloat(getPropertyValue(record, 'berat', 0)))),
-
-        _row(
+          _labelProperty(
+            'Harga', vnode.state.record ? _formatValue(vnode.state.record, 'harga') : 'Loading...'),
           _labelProperty(
             'Lokasi',
-            _propLink(record, 'lokasi', _formatLocation(getPropertyValue(record, 'lokasi')))
-          )),
-
-           
-        _row(
-          _labelProperty('Kedaluwarsa', _formatDate(getPropertyValue(record, 'kedaluwarsa', 0))),
-          _labelProperty(
-            'Harga', vnode.state.record ? _formatValue(vnode.state.record, 'harga') : 'Loading...'
-          )),
-
+            _propLink(record, 'lokasi', _formatLocation(getPropertyValue(record, 'lokasi'))))),
+         
         _row(m(ReporterControl, {
           record,
           publicKey,
@@ -479,7 +455,20 @@ const RiceDetail = {
                  }
                },
                'Menyelesaikan')))
-         : '')
+         : ''),
+
+        m(TransferControl, {
+          publicKey,
+          record,
+          agents: vnode.state.agents,
+          role: 'custodian',
+          label: 'Administrator',
+          onsuccess: () => _loadData(vnode.attrs.recordId, vnode.state)
+        }),
+
+         m('button.btn.btn-primary', {
+          onclick: () => m.route.set(`/transfer-ownership/${vnode.state.record.recordId}`)
+      }, 'Jual')
        )
     ]
   }

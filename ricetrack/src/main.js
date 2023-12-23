@@ -16,6 +16,7 @@ const AgentList = require('./views/list_agents')
 const RiceList = require('./views/list_rice')
 const RiceUpdates = require('./views/rice_updates')
 const RiceDetail = require('./views/rice_detail')
+const TransferOwnership = require('./views/transfer_ownership')
 const Dashboard = require('./views/dashboard')
 const LoginForm = require('./views/login_form')
 const PropertyDetailPage = require('./views/property_detail')
@@ -110,6 +111,7 @@ document.addEventListener('DOMContentLoaded', () => {
     '/create': resolve(AddRice, true),
     '/rice/:recordId': resolve(RiceDetail),
     '/rice-updates/:recordId': resolve(RiceUpdates),
+    '/transfer-ownership/:recordId': resolve(TransferOwnership),
     '/rice': resolve(RiceList),
     '/login': resolve(LoginForm),
     '/logout': { onmatch: logout },

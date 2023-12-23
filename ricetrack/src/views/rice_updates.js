@@ -29,7 +29,8 @@ const RiceUpdates = {
         const timestamp = update.timestamp;
         if (!vnode.state.groupedUpdates[timestamp]) {
           vnode.state.groupedUpdates[timestamp] = {
-            tglprod: [],
+            tgltransaksi: [],
+            kedaluwarsa: [],
             lokasi: [],
             harga: []
           };
@@ -82,7 +83,7 @@ const RiceUpdates = {
 
     
     const formatKeterangan = (updates) => {
-      let hasTglprod = updates.tglprod.length > 0;
+      let hasTglprod = updates.kedaluwarsa.length > 0;
       let hasHarga = updates.harga.length > 0;
       let hasLokasi = updates.lokasi.length > 0;
 
@@ -114,7 +115,7 @@ const RiceUpdates = {
             const updates = vnode.state.groupedUpdates[timestamp];
             console.log(`Rendering row for timestamp ${timestamp}`, updates);
             return m('tr', [
-              m('td', formatTimestamp(updates.tglprod[0])),
+              m('td', formatTimestamp(updates.tgltransaksi[0])),
               m('td', formatKeterangan(updates)),
               m('td', ownerName),
               m('td', custodianName),

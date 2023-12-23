@@ -13,9 +13,7 @@ const layout = require('../components/layout')
  */
 const authorizableProperties = [
   ['lokasi', 'Lokasi'],
-  ['kedaluwarsa', 'Kedaluwarsa'],
   ['harga', 'Harga'],
-  ['shock', 'Shock']
 ]
 
 const varietasOptions = ['IR/Ciherang/Impari', 'Muncul', 'Mentik Wangi', 'IR42', 'Ketan'];
@@ -34,7 +32,7 @@ const AddRice = {
     const hours = String(now.getHours()).padStart(2, '0')
     const minutes = String(now.getMinutes()).padStart(2, '0')
 
-    vnode.state.tglprod = `${day}-${month}-${year} ${hours}:${minutes}`
+    vnode.state.tgltransaksi = `${day}-${month}-${year} ${hours}:${minutes}`
 
     // Initialize Latitude and Longitude
     if (navigator.geolocation) {
@@ -103,9 +101,9 @@ const AddRice = {
                  type: 'text',
                  placeholder: 'DD-MM-YYYY HH:mm',                              
                  oninput: m.withAttr('value', (value) => {
-                   vnode.state.tglprod = value
+                   vnode.state.tgltransaksi = value
                  }),
-                 value: vnode.state.tglprod
+                 value: vnode.state.tgltransaksi
                })),
                _formGroup('Berat (kg)', m('input.form-control', {
                  type: 'number',
@@ -156,7 +154,7 @@ const AddRice = {
                    m('.col-sm-8',
                      m('input.form-control', {
                        type: 'text',
-                       placeholder: 'Tambahkan administrator berdasarkan nama atau kunci publik...',
+                       placeholder: 'Tambahkan Reporter berdasarkan nama atau kunci publik...',
                        oninput: m.withAttr('value', (value) => {
                          // clear any previously matched values
                          vnode.state.reporters[i].reporterKey = null
@@ -219,27 +217,27 @@ const _updateReporters = (vnode, reporterIndex) => {
 const _handleSubmit = (signingKey, state) => {
 
   // Mengonversi 'DD-MM-YYYY HH:mm' ke format 'YYYY-MM-DDTHH:mm'
-  const parts = state.tglprod.split(" ")
+  const parts = state.tgltransaksi.split(" ")
   const dateParts = parts[0].split("-")
   const formattedDate = `${dateParts[2]}-${dateParts[1]}-${dateParts[0]}T${parts[1]}`
 
   // Konversi string tanggal yang sudah diformat ke timestamp Tanggal Produksi
-  const tglprodTimestamp = new Date(formattedDate).getTime()
+  const tgltransaksiTimestamp = new Date(formattedDate).getTime()
   // Pastikan hasilnya adalah angka yang valid
-  if (isNaN(tglprodTimestamp)) {
+  if (isNaN(tgltransaksiTimestamp)) {
     alert("Format tanggal tidak valid. Gunakan format DD-MM-YYYY HH:mm")
     return
   }
 
   // Konversi string tanggal yang sudah diformat ke objek Date untuk menghitung Kedaluwarsa
-  const tglprodDate = new Date(formattedDate)
+  const tgltransaksiDate = new Date(formattedDate)
   // Pastikan hasilnya adalah tanggal yang valid
-  if (isNaN(tglprodDate.getTime())) {
+  if (isNaN(tgltransaksiDate.getTime())) {
     alert("Format tanggal produksi tidak valid. Gunakan format DD-MM-YYYY HH:mm")
     return
   }
-  // Hitung tanggal kedaluwarsa (2 tahun setelah tglprod)
-  const kedaluwarsaDate = new Date(tglprodDate)
+  // Hitung tanggal kedaluwarsa (2 tahun setelah tgltransaksi)
+  const kedaluwarsaDate = new Date(tgltransaksiDate)
   kedaluwarsaDate.setFullYear(kedaluwarsaDate.getFullYear() + 2)
   // Konversi tanggal kedaluwarsa ke timestamp atau format yang diinginkan
   const kedaluwarsaTimestamp = kedaluwarsaDate.getTime()
@@ -256,8 +254,8 @@ const _handleSubmit = (signingKey, state) => {
         dataType: payloads.createRecord.enum.STRING
       },
       {
-        name: 'tglprod',
-        intValue: tglprodTimestamp,
+        name: 'tgltransaksi',
+        intValue: tgltransaksiTimestamp,
         dataType: payloads.createRecord.enum.INT
       },
       {

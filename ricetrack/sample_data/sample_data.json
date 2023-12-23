@@ -10,7 +10,7 @@
             "stringValue": "Muncul"
           },
           {
-            "name": "tglprod",
+            "name": "tgltransaksi",
             "dataType": 2,
             "intValue": 1279895874000
           },
@@ -22,12 +22,12 @@
           {
             "name": "berat",
             "dataType": 2,
-            "intValue": 50000000
+            "intValue": 5
           },
           {
             "name": "harga",
             "dataType": 2,
-            "intValue": 95000000000
+            "intValue": 95000
           },
           {
             "name": "lokasi",
@@ -41,7 +41,7 @@
       "ownerIndex": 0,
       "custodianIndex": 2,
       "reporterIndex": 1,
-      "reportableProperties": ["kedaluwarsa", "lokasi", "harga", "shock"]
+      "reportableProperties": ["lokasi", "harga"]
     },
 
     {
@@ -54,7 +54,7 @@
             "stringValue": "Ketan"
           },
           {
-            "name": "tglprod",
+            "name": "tgltransaksi",
             "dataType": 2,
             "intValue": 1406129874000
           },
@@ -66,12 +66,12 @@
           {
             "name": "berat",
             "dataType": 2,
-            "intValue": 10000000
+            "intValue": 10
           },
           {
             "name": "harga",
             "dataType": 2,
-            "intValue": 180000000000
+            "intValue": 180000
           },
           {
             "name": "lokasi",
@@ -95,7 +95,7 @@
             "stringValue": "IR42"
           },
           {
-            "name": "tglprod",
+            "name": "tgltransaksi",
             "dataType": 2,
             "intValue": 1406111874000
           },
@@ -107,12 +107,12 @@
           {
             "name": "berat",
             "dataType": 2,
-            "intValue": 5000000
+            "intValue": 50
           },
           {
             "name": "harga",
             "dataType": 2,
-            "intValue": 200000000000
+            "intValue": 500000
           },
           {
             "name": "lokasi",

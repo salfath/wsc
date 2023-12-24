@@ -100,12 +100,20 @@ const RiceDetail = {
         // Check for proposals and prompt for action
         if (_hasProposal(record, publicKey, 'owner') || _hasProposal(record, publicKey, 'custodian') || _hasProposal(record, publicKey, 'reporter')) {
             setTimeout(() => {
-                const response = confirm('You have a pending proposal for this record. Do you want to accept it?');
+                let role;
+                if (_hasProposal(record, publicKey, 'owner')) {
+                    role = 'owner';
+                } else if (_hasProposal(record, publicKey, 'custodian')) {
+                    role = 'custodian';
+                } else if (_hasProposal(record, publicKey, 'reporter')) {
+                    role = 'reporter';
+                }
+
+                const response = confirm(`You have a pending proposal for this record as a ${role}. Do you want to accept it?`);
                 if (response) {
-                    // Assuming 'owner' role for simplicity; adjust as necessary
-                    _answerProposal(record, publicKey, 'owner', payloads.answerProposal.enum.ACCEPT, vnode.state)
+                    _answerProposal(record, publicKey, role, payloads.answerProposal.enum.ACCEPT, vnode.state)
                 } else {
-                    _answerProposal(record, publicKey, 'owner', payloads.answerProposal.enum.REJECT, vnode.state)
+                    _answerProposal(record, publicKey, role, payloads.answerProposal.enum.REJECT, vnode.state)
                 }
             }, 0);
         }
@@ -147,18 +155,18 @@ const RiceDetail = {
                         record.owner === publicKey && !record.final ?
                             m('button.btn.btn-primary', {
                                 onclick: () => m.route.set(`/transfer-ownership/${record.recordId}`)
-                            }, 'Transfer Ownership') : null,
+                            }, 'Jual') : null,
 
                         record.custodian === publicKey && !record.final ?
                             m('button.btn.btn-primary', {
                                 onclick: () => m.route.set(`/update-properties/${record.recordId}`)
                             }, 'Update Properties') : null,
 
-                        isReporter(record, publicKey) ?
+                        (record.owner === publicKey || record.custodian === publicKey) && !record.final ?
                             m('button.btn.btn-primary', {
                                 onclick: () => m.route.set(`/manage-reporters/${record.recordId}`)
-                            }, 'Manage Reporters') : null
-                    )
+                            }, 'Kelola Reporters') : null,
+            )
                 )
             )
         ]

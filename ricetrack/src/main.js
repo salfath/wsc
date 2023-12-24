@@ -17,11 +17,11 @@ const RiceList = require('./views/list_rice')
 const RiceUpdates = require('./views/rice_updates')
 const RiceDetail = require('./views/rice_detail')
 const TransferOwnership = require('./views/transfer_ownership')
+const ManageReporters = require('./views/manage_reporters')
 const Dashboard = require('./views/dashboard')
 const LoginForm = require('./views/login_form')
 const PropertyDetailPage = require('./views/property_detail')
 const SignupForm = require('./views/signup_form')
-
 
 /**
  * A basic layout component that adds the navbar to the view.
@@ -112,6 +112,7 @@ document.addEventListener('DOMContentLoaded', () => {
     '/rice/:recordId': resolve(RiceDetail),
     '/rice-updates/:recordId': resolve(RiceUpdates),
     '/transfer-ownership/:recordId': resolve(TransferOwnership),
+    '/manage-reporters/:recordId': resolve(ManageReporters),
     '/rice': resolve(RiceList),
     '/login': resolve(LoginForm),
     '/logout': { onmatch: logout },

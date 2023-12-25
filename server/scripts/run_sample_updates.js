@@ -98,14 +98,14 @@ const updateProperty = (update, oldValue) => {
 
     property.locationValue = protos.Location.create(intLoc)
 
-  } else if (property.name === 'tilt') {
+  } else if (property.name === 'harga') {
     oldValue = JSON.parse(oldValue)
 
-    const defaultTilt = { x: 0, y: 0 }
-    const newTilt = updateValue(update, oldValue || defaultTilt)
-    const intTilt = _.mapValues(newTilt, parseInt)
+    const defaultHarga = { x: 0, y: 0 }
+    const newHarga = updateValue(update, oldValue || defaultHarga)
+    const intHarga = _.mapValues(newHarga, parseInt)
 
-    property.stringValue = JSON.stringify(intTilt)
+    property.stringValue = JSON.stringify(intHarga)
 
   } else if (property.name === 'shock') {
     oldValue = JSON.parse(oldValue)

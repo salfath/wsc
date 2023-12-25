@@ -29,15 +29,6 @@ const typedWidget = state => {
     return m(LineGraphWidget, { updates: property.updates })
   }
 
-  if (property.name === 'tilt') {
-    return m(LineGraphWidget, {
-      updates: property.updates.map(update => {
-        const amplitude = Math.sqrt(update.value.x ** 2 + update.value.y ** 2)
-        return _.assign({}, update, {value: amplitude.toFixed(3)})
-      })
-    })
-  }
-
   if (property.name === 'shock') {
     return m(LineGraphWidget, {
       updates: property.updates.map(update => {
@@ -53,53 +44,52 @@ const typedWidget = state => {
 }
 
 const updateSubmitter = state => e => {
-  e.preventDefault()
-  const { name, dataType, recordId } = state.property
+  e.preventDefault();
+  const { name, dataType, recordId } = state.property;
 
-  let value = null
+  let value = null;
   if (state.update) {
-    value = state.update
-  } else if (name === 'tilt' || name === 'shock') {
-    value = JSON.stringify(state.tmp)
+    value = state.update;
+  } else if (name === 'harga') {
+    value = parseInt(state.tmp.harga.replace(/^Rp\./, '').replace(/\./g, ''), 10);
+  } else if (dataType === 'LOCATION') {
+    // Convert latitude and longitude to millionths for LOCATION dataType
+    value = {
+      latitude: parseInt(state.tmp.latitude * 1000000, 10),
+      longitude: parseInt(state.tmp.longitude * 1000000, 10)
+    };
   } else {
-    value = state.tmp
+    value = state.tmp;
   }
 
-  const update = { name }
-  update.dataType = payloads.updateProperties.enum[dataType]
-  update[`${dataType.toLowerCase()}Value`] = value
+  const update = { name };
+  update.dataType = payloads.updateProperties.enum[dataType];
+  update[`${dataType.toLowerCase()}Value`] = value;
 
   const payload = payloads.updateProperties({
     recordId,
     properties: [update]
-  })
+  });
 
   transactions.submit(payload, true)
     .then(() => api.get(`records/${recordId}/${name}`))
     .then(property => {
-      _.each(e.target.elements, el => { el.value = null })
-      state.update = null
-      state.tmp = {}
+      _.each(e.target.elements, el => { el.value = null; })
+      state.update = null;
+      state.tmp = {};
       property.updates.forEach(update => {
-        update.value = parsing.floatifyValue(update.value)
-      })
-      state.property = property
-    })
-}
+        update.value = parsing.floatifyValue(update.value);
+      });
+      state.property = property;
+    });
+};
 
-// Produces custom input fields for location, tilt, and shock
+// Produces custom input fields for location, harga, and shock
 const typedInput = state => {
   const { dataType, name } = state.property
 
   if (dataType === 'LOCATION') {
-    // Initialize state with current location if not already set
-    if (state.tmp.latitude === undefined) {
-      state.tmp.latitude = window.AppGlobals.currentLatitude;
-    }
-    if (state.tmp.longitude === undefined) {
-      state.tmp.longitude = window.AppGlobals.currentLongitude;
-    }
-
+    
     return [
       m('.col.md-4.mr-1',
         m('input.form-control', {
@@ -116,20 +106,22 @@ const typedInput = state => {
     ]
   }
 
-  if (name === 'tilt') {
-    return [
-      m('.col.md-4.mr-1',
-        m('input.form-control', {
-          placeholder: 'Enter X...',
-          oninput: withIntVal(value => { state.tmp.x = value })
-        })),
-      m('.col.md-4',
-        m('input.form-control', {
-          placeholder: 'Enter Y...',
-          oninput: withIntVal(value => { state.tmp.y = value })
-        }))
-    ]
+  if (name === 'harga') {
+    return m('.col.md-8',
+      m('input.form-control', {
+        placeholder: 'Rp.0',
+        oninput: m.withAttr('value', value => {
+          // Format the input to include "Rp." and thousand separators
+          state.tmp.harga = formatCurrencyInput(value);
+        }),
+        value: state.tmp.harga
+      }))
   }
+  const formatCurrencyInput = (value) => {
+    let numericValue = value.replace(/^Rp\./, '').replace(/\./g, '');
+    let formattedValue = parseInt(numericValue, 10).toLocaleString('id-ID');
+    return 'Rp.' + formattedValue;
+  };
 
   if (name === 'shock') {
     return [
@@ -180,6 +172,26 @@ const PropertyDetailPage = {
   oninit (vnode) {
     vnode.state.currentPage = 0
     vnode.state.tmp = {}
+
+    // Method to get current location
+    const getCurrentLocation = () => {
+      if ('geolocation' in navigator) {
+        navigator.geolocation.getCurrentPosition((position) => {
+          vnode.state.tmp.latitude = position.coords.latitude.toFixed(6);
+          vnode.state.tmp.longitude = position.coords.longitude.toFixed(6);
+          m.redraw();
+        }, (error) => {
+          console.error('Error getting location:', error);
+          vnode.state.tmp.latitude = '';
+          vnode.state.tmp.longitude = '';
+        });
+      } else {
+        console.error('Geolocation is not supported by this browser.');
+      }
+    };
+
+    // Get the current location
+    getCurrentLocation();
 
     const refresh = () => {
       api.get(`records/${vnode.attrs.recordId}/${vnode.attrs.name}`)

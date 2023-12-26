@@ -1,153 +1,107 @@
 'use strict'
 
-const m = require('mithril')
-const payloads = require('../services/payloads')
-const transactions = require('../services/transactions')
-const api = require('../services/api')
+const m = require('mithril');
+const api = require('../services/api');
+const { revokeReporter, authorizeReporter, reporters } = require('./reporterUtils');
 
-// Constants and utility functions from the original rice_detail.js
-const authorizableProperties = [
-  ['lokasi', 'Lokasi'],
-  ['harga', 'Harga'],
-];
+const _loadData = async (recordId, component) => {
+  try {
+    console.log('Loading data for record:', recordId);
 
-const _reporters = (record) => {
-  return record.properties.reduce((acc, property) => {
-    return property.reporters.reduce((acc, key) => {
-      let props = (acc[key] || [])
-      props.push(property.name)
-      acc[key] = props
-      return acc
-    }, acc)
-  }, {})
-}
+    const record = await api.get(`records/${recordId}`);
+    component.record = record;
 
-const _agentByKey = (agents, key) =>
-  agents.find((agent) => agent.key === key) || { name: 'Unknown Agent' }
+    console.log('Fetched record:', record);
 
-const loadRecordData = (recordId, component) => {
-  api.get(`records/${recordId}`)
-    .then((record) => {
-      component.record = record;
-      component.reportersList = _reporters(record);
-      return api.get('agents');
-    })
-    .then((agents) => {
-      component.agents = agents;
-      m.redraw();
-    })
-    .catch((error) => {
-      console.error('Error loading data:', error);
-      alert('Failed to load record data. Please try again.');
-    });
+    const agents = await api.get('agents');
+
+    component.currentReporters = await getCurrentReporters(record, component);
+
+    console.log('Current Reporters:', component.currentReporters);
+
+    component.potentialReporters = getPotentialReporters(agents, record, component.currentReporters);
+    console.log('Potential Reporters:', component.potentialReporters);
+
+    // Trigger a redraw in Mithril
+    m.redraw();
+  } catch (error) {
+    console.error('Error loading data:', error);
+  }
+};
+
+const getCurrentReporters = async (record, component) => {
+  try {
+    const agents = await api.get('agents');
+    const publicKey = await api.getPublicKey();
+    return reporters(record, agents).filter(reporter =>
+      reporter.key !== publicKey &&
+      reporter.key !== record.owner &&
+      reporter.key !== record.custodian
+    );
+  } catch (error) {
+    console.error('Error in getCurrentReporters:', error);
+    throw error;
+  }
+};
+
+
+const getPotentialReporters = (agents, record, currentReporters) => {
+  const currentReporterKeys = currentReporters.map(reporter => reporter.key);
+  const publicKey = api.getPublicKey();
+
+  return agents.filter(agent =>
+    !currentReporterKeys.includes(agent.key) &&
+    agent.key !== record.owner &&
+    agent.key !== record.custodian &&
+    agent.key !== publicKey
+  );
 };
 
 const ManageReporters = {
-  oninit: (vnode) => {
-    this.recordId = vnode.attrs.recordId
-    loadRecordData(this.recordId, this);
+  oninit(vnode) {
+    vnode.state.currentReporters = [];
+    _loadData(vnode.attrs.recordId, vnode.state);
+    vnode.state.refreshId = setInterval(() => {
+      _loadData(vnode.attrs.recordId, vnode.state);
+    }, 2000);
   },
 
-  view: () => {
-    if (!this.record) {
-      return m('.alert-warning', `Loading record data...`)
+  onbeforeremove(vnode) {
+    clearInterval(vnode.state.refreshId);
+  },
+
+  view(vnode) {
+    if (!vnode.state.record) {
+      return m('.alert-warning', 'Loading record data...');
     }
 
+    const { recordId, potentialReporters, currentReporters } = vnode.state;
+
+    const selectedProperty = '[harga]';
+
+    let selectedReporterKey = potentialReporters && potentialReporters.length > 0 ? potentialReporters[0].key : null;
+
+    console.log('selectedReporterKey', selectedReporterKey);
+    console.log('potentialReporters', potentialReporters);
+    console.log('currentReporters', currentReporters);
+
     return m('.manage-reporters',
-      m('h1', `Kelola reporter produk: ${this.recordId}`),
-
-      // Displaying aggregated reporters and their authorized properties
-      Object.entries(this.reportersList).map(([key, properties]) => {
-        let reporter = _agentByKey(this.agents, key)
-        return m('div',
+    currentReporters.map(reporter => 
+        m('div',
           m('h3', `Reporter: ${reporter.name}`),
-          m('ul',
-            properties.map(property =>
-              m('li', `${property}`))
-          )
+          m('button', { onclick: () => revokeReporter(recordId, key) }, 'Revoke')
         )
-      }),
-
-      this.record.properties.map((property) => {
-        return m('.property',
-          m('h3', `Property: ${property.name}`),
-          m('ul',
-            property.reporters.map((reporterKey) => {
-              let reporter = _agentByKey(this.agents, reporterKey)
-              return m('li',
-                `${reporter.name} `,
-                m('button', {
-                  onclick: () => this.revokeReporter(reporterKey, property.name)
-                }, 'Revoke')
-              )
-            }),
-            m('li',
-              m('button', {
-                onclick: () => this.authorizeReporter(property.name)
-              }, 'Authorize New Reporter')
-            )
-          )
-        )
-      }),
-
-      // Additional UI for selecting a reporter and properties
-      // Similar to AuthorizeReporter component in rice_detail.js
-      m('div',
-        m('input[type=text]', {
-          placeholder: 'Reporter Key or Name',
-          oninput: m.withAttr('value', (value) => this.selectedReporterKey = value)
-        }),
-        m('select',
-          { onchange: m.withAttr('value', (value) => this.selectedProperty = value) },
-          authorizableProperties.map(([key, label]) =>
-            m('option', { value: key }, label)
+      ),
+      selectedReporterKey.length > 0 && m('div',
+        m('select', { onchange: m.withAttr('value', value => selectedReporterKey = value) },
+          potentialReporters.map(agent =>
+            m('option', { value: agent.key }, agent.name)
           )
         ),
-        m('button', {
-          onclick: () => this.authorizeReporter(this.selectedReporterKey, this.selectedProperty)
-        }, 'Authorize')
+        m('button', { onclick: () => authorizeReporter(recordId, selectedReporterKey, selectedProperty) }, 'Authorize')
       )
-    )
+    );
   }
 }
 
-authorizeReporter: (reporterKey, propertyName) => {
-  let authorizePayload = payloads.createProposal({
-    recordId: this.recordId,
-    receivingAgent: reporterKey,
-    role: payloads.createProposal.enum.REPORTER,
-    properties: [propertyName]
-  })
-
-  return transactions.submit([authorizePayload], true)
-    .then(() => {
-      console.log('Successfully submitted proposal')
-      alert('Reporter successfully authorized.')
-      this.loadRecordData() // Reload data to update UI
-    })
-    .catch((error) => {
-      console.error('Error authorizing reporter:', error)
-      alert('Failed to authorize reporter. Please try again.')
-    })
-}
-
-revokeReporter: (reporterKey, propertyName) => {
-  let revokePayload = payloads.revokeReporter({
-    recordId: this.recordId,
-    reporterId: reporterKey,
-    properties: [propertyName]
-  })
-
-  return transactions.submit([revokePayload], true)
-    .then(() => {
-      console.log('Successfully revoked reporter')
-      alert('Reporter authorization revoked.')
-      this.loadRecordData() // Reload data to update UI
-    })
-    .catch((error) => {
-      console.error('Error revoking reporter:', error)
-      alert('Failed to revoke reporter. Please try again.')
-    })
-}
-
-module.exports = ManageReporters
+module.exports = ManageReporters;

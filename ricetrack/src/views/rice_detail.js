@@ -7,26 +7,43 @@ const {
     getLatestPropertyUpdateTime,
     getOldestPropertyUpdateTime,
     isReporter
-  } = require('../utils/records')
+} = require('../utils/records')
 const api = require('../services/api')
 const parsing = require('../services/parsing')
 const transactions = require('../services/transactions')
 
 
+const authorizableProperties = [
+    ['lokasi', 'Lokasi'],
+    ['harga', 'Harga'],
+]
+
+const _authorizeReporter = (record, reporterKey, properties) => {
+    let authorizePayload = payloads.createProposal({
+        recordId: record.recordId,
+        receivingAgent: reporterKey,
+        role: payloads.createProposal.enum.REPORTER,
+        properties: properties
+    })
+
+    return transactions.submit([authorizePayload], true).then(() => {
+        console.log('Successfully submitted proposal')
+    })
+}
 
 const _formatTimestamp = (sec) => {
-  if (!sec) {
-    sec = Date.now() / 1000
-  }
-  return moment.unix(sec).format('YYYY-MM-DD')
+    if (!sec) {
+        sec = Date.now() / 1000
+    }
+    return moment.unix(sec).format('YYYY-MM-DD')
 }
 
 const _labelProperty = (label, value) => [
-  m('dl', m('dt', label), m('dd', value))
+    m('dl', m('dt', label), m('dd', value))
 ]
 
 const _row = (...cols) =>
-  m('.row', cols.filter((col) => col !== null).map((col) => m('.col', col)))
+    m('.row', cols.filter((col) => col !== null).map((col) => m('.col', col)))
 
 const _agentLink = (agent) =>
     m(`a[href=/agents/${agent.key}]`, { oncreate: m.route.link }, agent.name)
@@ -46,33 +63,37 @@ const _formatDate = (timestamp) => {
     return moment.unix(seconds).format('DD-MM-YYYY')
 }
 const _getProposal = (record, receivingAgent, role) =>
-  record.proposals.find(
-    (proposal) => (proposal.role.toLowerCase() === role && proposal.receivingAgent === receivingAgent))
+    record.proposals.find(
+        (proposal) => (proposal.role.toLowerCase() === role && proposal.receivingAgent === receivingAgent))
 
 const _hasProposal = (record, receivingAgent, role) =>
-  !!_getProposal(record, receivingAgent, role)
+    !!_getProposal(record, receivingAgent, role)
 
 const _answerProposal = (record, publicKey, role, response, state) => {
-  let answerPayload = payloads.answerProposal({
-    recordId: record.recordId,
-    receivingAgent: publicKey,
-    role,
-    response
-  })
+    let answerPayload = payloads.answerProposal({
+        recordId: record.recordId,
+        receivingAgent: publicKey,
+        role,
+        response
+    })
 
-  return transactions.submit([answerPayload], true).then(() => {
-    console.log('Successfully submitted answer')
-    if (response === payloads.answerProposal.enum.ACCEPT) {
-      // Update role based on accepted proposal
-      if (role === 'owner') {
-        state.record.owner = publicKey;
-      } else if (role === 'custodian') {
-        state.record.custodian = publicKey;
-      }
-      // Reporter role might require additional logic depending on data structure
-    }
-    m.redraw(); // Trigger a redraw to update the UI
-  })
+    return transactions.submit([answerPayload], true).then(() => {
+        console.log('Successfully submitted answer')
+
+        console.log('Properties:', record.proposals[0].properties)
+
+        if (response === payloads.answerProposal.enum.ACCEPT) {
+            // Update role based on accepted proposal
+            if (role === 'owner') {
+                state.record.owner = publicKey;
+            } else if (role === 'custodian') {
+                state.record.custodian = publicKey;
+            } else if (role === 'reporter') {
+                _authorizeReporter(record, publicKey, role, record.proposals[0].properties)
+            }
+        }
+        m.redraw(); // Trigger a redraw to update the UI
+    })
 }
 
 const RiceDetail = {
@@ -166,7 +187,7 @@ const RiceDetail = {
                             m('button.btn.btn-primary', {
                                 onclick: () => m.route.set(`/manage-reporters/${record.recordId}`)
                             }, 'Kelola Reporters') : null,
-            )
+                    )
                 )
             )
         ]

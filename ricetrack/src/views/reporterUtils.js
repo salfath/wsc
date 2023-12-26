@@ -18,13 +18,22 @@ const authorizeReporter = (recordId, reporterKey, propertyName) => {
             alert('Reporter successfully authorized.');
         })
         .catch((error) => {
+            // Attempt to parse the error message to extract the specific error
+            try {
+                const errorObj = JSON.parse(error.message);
+                const specificErrorMessage = errorObj.error || "An unknown error occurred.";
+                alert(`Failed to authorize reporter: ${specificErrorMessage}`);
+            } catch (parseError) {
+                // If parsing fails, fall back to a generic error message
+                alert('Failed to authorize reporter due to an unexpected error.');
+            }
+
             console.error('Error authorizing reporter:', error);
-            alert('Failed to authorize reporter. Please try again.');
         });
 };
 
 // Revokes a reporter's authorization for a specific property
-const revokeReporter = (recordId, reporterKey, propertyName) => {
+const revokeReporter = (recordId, reporterKey, propertyName, onSuccess) => {
     let revokePayload = payloads.revokeReporter({
         recordId: recordId,
         reporterId: reporterKey,
@@ -35,10 +44,22 @@ const revokeReporter = (recordId, reporterKey, propertyName) => {
         .then(() => {
             console.log('Successfully revoked reporter');
             alert('Reporter authorization revoked.');
+            if (onSuccess && typeof onSuccess === 'function') {
+                onSuccess(); // Call the onSuccess callback function
+            }
         })
         .catch((error) => {
+            // Attempt to parse the error message to extract the specific error
+            try {
+                const errorObj = JSON.parse(error.message);
+                const specificErrorMessage = errorObj.error || "An unknown error occurred.";
+                alert(`Failed to revoke reporter: ${specificErrorMessage}`);
+            } catch (parseError) {
+                // If parsing fails, fall back to a generic error message
+                alert('Failed to revoke reporter due to an unexpected error.');
+            }
+
             console.error('Error revoking reporter:', error);
-            alert('Failed to revoke reporter. Please try again.');
         });
 };
 

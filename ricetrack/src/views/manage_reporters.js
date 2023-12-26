@@ -6,21 +6,14 @@ const { revokeReporter, authorizeReporter, reporters } = require('./reporterUtil
 
 const _loadData = async (recordId, component) => {
   try {
-    console.log('Loading data for record:', recordId);
 
     const record = await api.get(`records/${recordId}`);
     component.record = record;
-
-    console.log('Fetched record:', record);
-
     const agents = await api.get('agents');
 
     component.currentReporters = await getCurrentReporters(record, component);
 
-    console.log('Current Reporters:', component.currentReporters);
-
     component.potentialReporters = getPotentialReporters(agents, record, component.currentReporters);
-    console.log('Potential Reporters:', component.potentialReporters);
 
     // Trigger a redraw in Mithril
     m.redraw();
@@ -59,7 +52,10 @@ const getPotentialReporters = (agents, record, currentReporters) => {
 
 const ManageReporters = {
   oninit(vnode) {
+    vnode.state.recordId = vnode.attrs.recordId;
     vnode.state.currentReporters = [];
+    vnode.state.potentialReporters = [];
+
     _loadData(vnode.attrs.recordId, vnode.state);
     vnode.state.refreshId = setInterval(() => {
       _loadData(vnode.attrs.recordId, vnode.state);
@@ -77,29 +73,46 @@ const ManageReporters = {
 
     const { recordId, potentialReporters, currentReporters } = vnode.state;
 
-    const selectedProperty = '[harga]';
+    const selectedProperty = 'harga';
 
     let selectedReporterKey = potentialReporters && potentialReporters.length > 0 ? potentialReporters[0].key : null;
 
-    console.log('selectedReporterKey', selectedReporterKey);
-    console.log('potentialReporters', potentialReporters);
-    console.log('currentReporters', currentReporters);
+    console.log('recordId:', recordId);
+    console.log('selectedReporterKey:', selectedReporterKey);
+    console.log('selectedProperty:', selectedProperty);
+    console.log('Record ID:', recordId);
 
     return m('.manage-reporters',
-    currentReporters.map(reporter => 
-        m('div',
-          m('h3', `Reporter: ${reporter.name}`),
-          m('button', { onclick: () => revokeReporter(recordId, key) }, 'Revoke')
-        )
-      ),
-      selectedReporterKey.length > 0 && m('div',
-        m('select', { onchange: m.withAttr('value', value => selectedReporterKey = value) },
-          potentialReporters.map(agent =>
-            m('option', { value: agent.key }, agent.name)
+      [
+        m('h1', 'Kelola Reporter'), // Main title
+        m('h2', { style: { 'font-size': 'smaller' } }, `Record ID: ${recordId}`),
+        m('h4', 'Current Reporters:'),
+        currentReporters.map(reporter =>
+          m('div',
+            m('h6', `${reporter.name}`),
+            m('button', { 
+              onclick: () => {
+              revokeReporter(recordId, reporter.key, selectedProperty)
+              _loadData(vnode.attrs.recordId, vnode.state)
+            }
+             }, 'Revoke')
           )
         ),
-        m('button', { onclick: () => authorizeReporter(recordId, selectedReporterKey, selectedProperty) }, 'Authorize')
-      )
+        m('h4', 'Add Reporters:'),
+        selectedReporterKey.length > 0 && m('div',
+          m('select', { onchange: m.withAttr('value', value => selectedReporterKey = value) },
+            potentialReporters.map(agent =>
+              m('option', { value: agent.key }, agent.name)
+            )
+          ),
+          m('button', {
+            onclick: () => {
+              authorizeReporter(recordId, selectedReporterKey, selectedProperty)
+              _loadData(vnode.attrs.recordId, vnode.state)
+            }
+          }, 'Authorize')
+        )
+      ]
     );
   }
 }

@@ -3,6 +3,12 @@
 const payloads = require('../services/payloads');
 const transactions = require('../services/transactions');
 
+
+const authorizableProperties = [
+    ['lokasi', 'Lokasi'],
+    ['harga', 'Harga'],
+]
+
 // Authorizes a reporter for property lokasi
 const authorizeReporter = (recordId, reporterKey, propertyName) => {
     let authorizePayload = payloads.createProposal({

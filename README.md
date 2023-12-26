@@ -21,7 +21,7 @@ can track the product by its data such as serial number, location or type. Also,
 - [Docker Composer](https://docs.docker.com/compose/install/)
  
 ## Diagrams
-You can find Architectural UML Diagrams [here](https://github.com/CarlosRoldanx/Buxton/tree/master/UML%20Diagrams). 
+You can find Architectural UML Diagrams [here](https://github.com/salfath/wsc/tree/master/UML%20Diagrams). 
  
 ## Use Case
 A Rice Milling company can access the prototype and register an administrator. Then,

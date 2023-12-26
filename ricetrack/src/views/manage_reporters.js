@@ -55,11 +55,17 @@ const ManageReporters = {
     vnode.state.recordId = vnode.attrs.recordId;
     vnode.state.currentReporters = [];
     vnode.state.potentialReporters = [];
+    vnode.state.selectedReporterKey = null;
 
+    _loadData(vnode.attrs.recordId, vnode.state).then(() => {
+      // Set selectedReporterKey to the first potential reporter after data load
+      if (vnode.state.potentialReporters.length > 0) {
+        vnode.state.selectedReporterKey = vnode.state.potentialReporters[0].key;
+      }
+  })
+  vnode.state.refreshId = setInterval(() => {
     _loadData(vnode.attrs.recordId, vnode.state);
-    vnode.state.refreshId = setInterval(() => {
-      _loadData(vnode.attrs.recordId, vnode.state);
-    }, 2000);
+  }, 2000);
   },
 
   onbeforeremove(vnode) {
@@ -71,16 +77,11 @@ const ManageReporters = {
       return m('.alert-warning', 'Loading record data...');
     }
 
-    const { recordId, potentialReporters, currentReporters } = vnode.state;
-
+    const { recordId, potentialReporters, currentReporters, selectedReporterKey } = vnode.state;
     const selectedProperty = 'harga';
 
-    let selectedReporterKey = potentialReporters && potentialReporters.length > 0 ? potentialReporters[0].key : null;
-
     console.log('recordId:', recordId);
-    console.log('selectedReporterKey:', selectedReporterKey);
-    console.log('selectedProperty:', selectedProperty);
-    console.log('Record ID:', recordId);
+    console.log('xselectedReporterKey:', selectedReporterKey);
 
     return m('.manage-reporters',
       [
@@ -99,8 +100,11 @@ const ManageReporters = {
           )
         ),
         m('h4', 'Add Reporters:'),
-        selectedReporterKey.length > 0 && m('div',
-          m('select', { onchange: m.withAttr('value', value => selectedReporterKey = value) },
+        potentialReporters.length > 0 && m('div',
+          m('select', { 
+            onchange: m.withAttr('value', value => vnode.state.selectedReporterKey = value),
+            value: selectedReporterKey
+          },
             potentialReporters.map(agent =>
               m('option', { value: agent.key }, agent.name)
             )

@@ -1,7 +1,7 @@
 {
-  "name": "phone_track",
+  "name": "ricetrack",
   "version": "0.0.1",
-  "description": "A Sawtooth Supply Chain client web app to manage phone logistics",
+  "description": "A Sawtooth Supply Chain client web app to manage rice logistics",
   "main": "",
   "scripts": {
     "compile_protos": "node scripts/compile_protos.js > src/protos.json",
@@ -11,14 +11,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/CarlosRoldanx/sawtooth-supply-chain"
+    "url": "git+https://github.com/salfath/wsc"
   },
-  "author": "Carlos Roldan Torregrosa",
+  "author": "Salim Alfath",
   "license": "Apache-2.0",
   "bugs": {
-    "url": "https://github.com/CarlosRoldanx/sawtooth-supply-chain/issues"
+    "url": "https://github.com/salfath/wsc/issues"
   },
-  "homepage": "https://github.com/CarlosRoldanx/sawtooth-supply-chain#readme",
+  "homepage": "https://github.com/salfath/wsc#readme",
   "dependencies": {
     "bootstrap": "^4.0.0-beta",
     "chart.js": "^2.7.0",

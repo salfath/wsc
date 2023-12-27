@@ -37,10 +37,6 @@ const RiceList = {
 
   view (vnode) {
     let publicKey = api.getPublicKey()
-
-    vnode.state.filteredRecords.forEach(rec => {
-      console.log(`Record ID: ${rec.recordId}, Updates Link: /rice-updates/${rec.recordId}`)
-    })
     
     return [
       m('.rice-table',

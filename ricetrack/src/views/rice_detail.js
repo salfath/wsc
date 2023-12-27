@@ -6,11 +6,14 @@ const {
     getPropertyValue,
     getLatestPropertyUpdateTime,
     getOldestPropertyUpdateTime,
-    isReporter
 } = require('../utils/records')
 const api = require('../services/api')
 const parsing = require('../services/parsing')
+const payloads = require('../services/payloads');
 const transactions = require('../services/transactions')
+const { authorizeReporter } = require('./reporterUtils');
+const { BasicModal, show } = require('../components/modals')
+
 
 const _formatTimestamp = (sec) => {
     if (!sec) {
@@ -43,34 +46,44 @@ const _formatDate = (timestamp) => {
     const seconds = timestamp / 1000; // Konversi dari milidetik ke detik
     return moment.unix(seconds).format('DD-MM-YYYY')
 }
+
+const ROLE_TO_ENUM = {
+    'owner': payloads.createProposal.enum.OWNER,
+    'custodian': payloads.createProposal.enum.CUSTODIAN,
+    'reporter': payloads.createProposal.enum.REPORTER
+  }
+  
 const _getProposal = (record, receivingAgent, role) => {
     if (!record.proposals) {
         return null;
     }
-    //console.log('Searching for Proposal:', receivingAgent, role.toLowerCase());
-    
+
     return record.proposals.find(
         (proposal) => {
-            // console.log('Comparing:', proposal.receivingAgent, proposal.role.toLowerCase());
             return (proposal.role.toLowerCase() === role.toLowerCase() && proposal.receivingAgent === receivingAgent)
         })
 }
 const _hasProposal = (record, receivingAgent, role) =>
     !!_getProposal(record, receivingAgent, role)
 
-const _answerProposal = (record, publicKey, role, response, state) => {
+const _answerProposal = (record, publicKey, role, response) => {
+    console.log('Response:', response)
+    console.log('Role:', role)
+    console.log('Public key:', publicKey)
+
     let answerPayload = payloads.answerProposal({
         recordId: record.recordId,
         receivingAgent: publicKey,
         role,
         response
     })
+    console.log('?Record:', record)
+    console.log('Answer payload:', answerPayload);
+    console.log('Payloads answerProposal:', payloads.answerProposal.enum.ACCEPT)
 
     return transactions.submit([answerPayload], true).then(() => {
         console.log('Successfully submitted answer')
-
-        console.log('Properties:', record.proposals[0].properties)
-
+/*
         if (response === payloads.answerProposal.enum.ACCEPT) {
             // Update role based on accepted proposal
             if (role === 'owner') {
@@ -78,16 +91,26 @@ const _answerProposal = (record, publicKey, role, response, state) => {
             } else if (role === 'custodian') {
                 state.record.custodian = publicKey;
             } else if (role === 'reporter') {
-                _authorizeReporter(record, publicKey, role, record.proposals[0].properties)
+                console.log('Authorizing reporter')
+                console.log('Properties:', record.proposals[0].properties)
+                console.log('Public key:', publicKey)
+                console.log('Role:', role)
+                // state.record.reporters = 
+                // authorizeReporter(record, publicKey, role, record.proposals[0].properties)
+
             }
         }
+        */
         m.redraw(); // Trigger a redraw to update the UI
     })
+        .catch((error) => {
+            console.error('Error submitting transaction:', error);
+        });
 }
 
 const RiceDetail = {
     oninit(vnode) {
-
+        vnode.state.showModal = true;
         _loadData(vnode.attrs.recordId, vnode.state)
         vnode.state.refreshId = setInterval(() => {
             _loadData(vnode.attrs.recordId, vnode.state)
@@ -109,17 +132,9 @@ const RiceDetail = {
         let publicKey = api.getPublicKey()
         let proposals = vnode.state.record.proposals
 
-        console.log('Record:', record)
-        console.log('publicKey:', publicKey)
-        // console.log('Owner Proposal:', _hasProposal(record, publicKey, 'owner'))
-        // console.log('Custodian Proposal:', _hasProposal(record, publicKey, 'custodian'))
-        console.log('Reporter Proposal:', _hasProposal(record, publicKey, 'reporter'))
-        console.log('Proposals:', proposals)
-        console.log('Reporter:', isReporter(record, publicKey))
-        console.log('Get Proposal:', _getProposal(record, publicKey, 'reporter'))
-
         // Check for proposals and prompt for action
-        if (_hasProposal(record, publicKey, 'owner') || _hasProposal(record, publicKey, 'custodian') || _hasProposal(record, publicKey, 'reporter')) {
+        if ((vnode.state.showModal) && (_hasProposal(record, publicKey, 'owner') || _hasProposal(record, publicKey, 'custodian') || _hasProposal(record, publicKey, 'reporter'))) {
+            vnode.state.showModal = false;
             let role;
             if (_hasProposal(record, publicKey, 'owner')) {
                 role = 'owner';
@@ -129,12 +144,19 @@ const RiceDetail = {
                 role = 'reporter';
             }
 
-            const response = confirm(`You have a pending proposal for this record as a ${role}. Do you want to accept it?`);
-            if (response) {
-                _answerProposal(record, publicKey, role, payloads.answerProposal.enum.ACCEPT, vnode.state)
-            } else {
-                _answerProposal(record, publicKey, role, payloads.answerProposal.enum.REJECT, vnode.state)
-            }
+            show(BasicModal, {
+                title: 'Proposal Pending',
+                body: m('p', `You have a pending proposal for this record as a ${role}. Do you want to accept it?`),
+                acceptText: 'Yes',
+                cancelText: 'No'
+            }).then(() => {
+                console.log('Accepted proposal')
+                _answerProposal(record, publicKey, ROLE_TO_ENUM[role], payloads.answerProposal.enum.ACCEPT)
+            }).catch(() => {
+                console.log('Rejected proposal')
+                _answerProposal(record, publicKey, ROLE_TO_ENUM[role], payloads.answerProposal.enum.REJECT)
+            });
+
         }
         return [
             m('.rice-detail',

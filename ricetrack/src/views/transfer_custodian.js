@@ -17,13 +17,14 @@ const TransferCustodian = {
         vnode.state.custodian = '';
         vnode.state.tgltransaksi = moment().format('YYYY-MM-DDTHH:mm');
 
+
         // Load the record and agents
         Promise.all([
             api.get(`records/${vnode.attrs.recordId}`),
             api.get('agents')
         ]).then(([record, agents]) => {
             vnode.state.record = record;
-            vnode.state.agents = agents.filter(agent => agent.key !== record.owner && agent.key !== record.custodian);
+            vnode.state.agents = agents.filter(agent => (agent.key !== record.owner && agent.key !== record.custodian));
             vnode.state.custodian = _agentByKey(agents, record.custodian).name;
         });
     },
@@ -69,17 +70,19 @@ const _submitTransfer = (vnode) => {
         recordId: vnode.state.record.recordId,
         receivingAgent: vnode.state.selectedAgent,
         role: payloads.createProposal.enum.CUSTODIAN,
-        properties: [
-            { name: 'tgltransaksi', intValue: timestamp },
-        ]
+        properties: [{ name: 'tgltransaksi', intValue: timestamp },]
     });
-
+    
     transactions.submit([transferPayload], true)
         .then(() => {
             console.log('Successfully submitted transfer proposal');
             alert('Pengajuan ubah kustodian sudah selesai dilakukan. Menunggu konfirmasi.');
             m.route.set('/'); // Redirect after showing the message
-        });
+        })
+        .catch(err => {
+            console.error('Failed to submit custodian transfer proposal:', err)
+            alert('Failed to submit custodian transfer proposal.')
+          })
 }
 
 module.exports = TransferCustodian;

@@ -17,6 +17,7 @@ const RiceList = require('./views/list_rice')
 const RiceUpdates = require('./views/rice_updates')
 const RiceDetail = require('./views/rice_detail')
 const TransferOwnership = require('./views/transfer_ownership')
+const TransferCustodian = require('./views/transfer_custodian')
 const ManageReporters = require('./views/manage_reporters')
 const Dashboard = require('./views/dashboard')
 const LoginForm = require('./views/login_form')
@@ -112,6 +113,7 @@ document.addEventListener('DOMContentLoaded', () => {
     '/rice/:recordId': resolve(RiceDetail),
     '/rice-updates/:recordId': resolve(RiceUpdates),
     '/transfer-ownership/:recordId': resolve(TransferOwnership),
+    '/transfer-custodian/:recordId': resolve(TransferCustodian),
     '/manage-reporters/:recordId': resolve(ManageReporters),
     '/rice': resolve(RiceList),
     '/login': resolve(LoginForm),

@@ -25,11 +25,16 @@ const TransferCustodian = {
         ]).then(([record, agents]) => {
             vnode.state.record = record;
             vnode.state.agents = agents.filter(agent => (agent.key !== record.owner && agent.key !== record.custodian));
+            vnode.state.selectedAgent = vnode.state.agents[0].key;
             vnode.state.custodian = _agentByKey(agents, record.custodian).name;
         });
     },
 
     view: (vnode) => {
+        console.log('User in tc: ', api.getPublicKey());
+        console.log('Record in tc: ', vnode.state.record);
+        console.log('Selected Agent in tc: ', vnode.state.selectedAgent);
+        
         return m('.transfer-custodian',
             m('h2', `Ubah Kustodian`),
             m('h2', { style: { 'font-size': 'smaller' } }, `${vnode.attrs.recordId}`),

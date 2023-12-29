@@ -49,6 +49,8 @@ const _submitProposal = (record, role, publicKey) => {
  * Menjawab proposal yang ada.
  */
 const _answerProposal = (record, publicKey, role, response) => {
+  
+  console.log('Answering proposal', record, publicKey, role, response)
   let answerPayload = payloads.answerProposal({
     recordId: record.recordId,
     receivingAgent: publicKey,

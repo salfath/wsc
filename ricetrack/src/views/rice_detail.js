@@ -1,5 +1,7 @@
 const m = require('mithril');
 const api = require('../services/api');
+const payloads = require('../services/payloads');
+const transactions = require('../services/transactions');
 const {
     getPropertyValue,
     getLatestPropertyUpdateTime,
@@ -7,7 +9,7 @@ const {
     isReporter
 } = require('../utils/records')
 const { _formatDateTime, _formatDate, _formatTimestamp, _formatPrice, _formatLocation } = require('./formatUtils');
-const { _getProposal, _hasProposal, _answerProposal, _submitProposal } = require('./proposalUtils');
+const { _getProposal, _hasProposal, _answerProposal, _submitProposal, ROLE_TO_ENUM } = require('./proposalUtils');
 const { _revokeAuthorization, _authorizeReporter } = require('./reporterUtils');
 const { _updateProperty, _finalizeRecord } = require('./recordUtils');
 
@@ -29,17 +31,44 @@ const RiceDetail = {
     },
 
     view(vnode) {
-        if (!vnode.state.record) {
-            return m('.alert-warning', `Loading ${vnode.attrs.recordId}`);
-        }
+                if (!vnode.state.record) {
+                    return m('.alert-warning', `Loading ${vnode.attrs.recordId}`);
+                }
+                const record = vnode.state.record;
+                const publicKey = api.getPublicKey();
+                const isOwner = record.owner === publicKey;
+                const isCustodian = record.custodian === publicKey;
 
-        const record = vnode.state.record;
-        const publicKey = api.getPublicKey();
-        const isOwner = record.owner === publicKey;
-        const isCustodian = record.custodian === publicKey;
+                // check whether there is a proposal to answer for this user, whether proposal to be an owner, a custodian, or a reporter
+                let proposalsToAnswer = record.proposals.filter(proposal => proposal.receivingAgent === publicKey);
+                console.log('Record: ', record);
+                console.log('Public Key: ', publicKey);
+                console.log('Proposals: ', record.proposals);
+                console.log('Proposal to answer: ', proposalsToAnswer);
 
         return m('.rice-detail',
             m('h1.text-center', record.recordId),
+            // Menampilkan proposal yang perlu dijawab
+            proposalsToAnswer.length > 0
+                ? proposalsToAnswer.map(proposal =>
+                    m('.proposal-to-answer',
+                        m('p', `Proposal ${ROLE_TO_ENUM[proposal.role.toLowerCase()]} dari ${proposal.issuingAgent} kepada ${proposal.receivingAgent} untuk ${record.recordId}`),
+                        m('button.btn.btn-primary', {
+                            onclick: () => {
+                                console.log('Accepting proposal: ', proposal.role, ' for ', proposal.receivingAgent);
+                                _answerProposal(record, proposal.receivingAgent, ROLE_TO_ENUM[proposal.role.toLowerCase()], payloads.answerProposal.enum.ACCEPT)
+                                m.redraw(); // Trigger a redraw to update the UI
+                            }
+                        }, 'Terima'),
+                        m('button.btn.btn-danger', {
+                            onclick: () => {
+                                _answerProposal(record, proposal.receivingAgent, ROLE_TO_ENUM[proposal.role.toLowerCase()], payloads.answerProposal.enum.REJECT)
+                                m.redraw(); // Trigger a redraw to update the UI
+                            }
+                        }, 'Tolak')
+                    )
+                )
+                : null,
             _displayRecordDetails(record, vnode.state.owner, vnode.state.custodian),
             _displayInteractionButtons(record, publicKey, isOwner, isCustodian)
         );

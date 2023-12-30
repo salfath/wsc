@@ -1,17 +1,10 @@
 const m = require('mithril');
 const api = require('../services/api');
 const payloads = require('../services/payloads');
-const transactions = require('../services/transactions');
-const {
-    getPropertyValue,
-    getLatestPropertyUpdateTime,
-    getOldestPropertyUpdateTime,
-    isReporter
-} = require('../utils/records')
+const { getPropertyValue } = require('../utils/records')
 const { _formatDateTime, _formatDate, _formatTimestamp, _formatPrice, _formatLocation } = require('./formatUtils');
-const { _getProposal, _hasProposal, _answerProposal, _submitProposal, ROLE_TO_ENUM } = require('./proposalUtils');
-const { _revokeAuthorization, _authorizeReporter } = require('./reporterUtils');
-const { _updateProperty, _finalizeRecord } = require('./recordUtils');
+const { _answerProposal, ROLE_TO_ENUM } = require('./proposalUtils');
+const { _finalizeRecord } = require('./recordUtils');
 const { show, BasicModal } = require('../components/modals');
 
 const RiceDetail = {
@@ -31,16 +24,16 @@ const RiceDetail = {
     },
 
     view(vnode) {
-                if (!vnode.state.record) {
-                    return m('.alert-warning', `Loading ${vnode.attrs.recordId}`);
-                }
-                const record = vnode.state.record;
-                const publicKey = api.getPublicKey();
-                const isOwner = record.owner === publicKey;
-                const isCustodian = record.custodian === publicKey;
+        if (!vnode.state.record) {
+            return m('.alert-warning', `Loading ${vnode.attrs.recordId}`);
+        }
+        const record = vnode.state.record;
+        const publicKey = api.getPublicKey();
+        const isOwner = record.owner === publicKey;
+        const isCustodian = record.custodian === publicKey;
 
-                // check whether there is a proposal to answer for this user, whether proposal to be an owner, a custodian, or a reporter
-                let proposalsToAnswer = record.proposals.filter(proposal => proposal.receivingAgent === publicKey);
+        // check whether there is a proposal to answer for this user, whether proposal to be an owner, a custodian, or a reporter
+        let proposalsToAnswer = record.proposals.filter(proposal => proposal.receivingAgent === publicKey);
 
         return m('.rice-detail',
             m('h1.text-center', record.recordId),
@@ -98,15 +91,13 @@ const _displayRecordDetails = (record, owner, custodian) => {
 };
 
 const _displayInteractionButtons = (record, publicKey, isOwner, isCustodian, vnode) => {
-    console.log('Final?: ', record.final)
-
     return m('.row.m-2',
         m('.col.text-center',
             [
                 // isCustodian && m('button.btn.btn-primary', { onclick: () => m.route.set(`/update-properties/${record.recordId}`) }, 'Update Properties'),
                 m('button.btn.btn-primary', { onclick: () => m.route.set(`/rice-updates/${record.recordId}`) }, 'Lacak'),
                 isOwner && !record.final && m('button.btn.btn-primary', { onclick: () => m.route.set(`/transfer-ownership/${record.recordId}`) }, 'Jual'),
-                isCustodian && !record.final && m('button.btn.btn-primary', { onclick: () => m.route.set(`/transfer-custodian/${record.recordId}`) }, 'Ubah Kustodian'),
+                isOwner && !record.final && m('button.btn.btn-primary', { onclick: () => m.route.set(`/transfer-custodian/${record.recordId}`) }, 'Ubah Kustodian'),
                 isOwner && !record.final && m('button.btn.btn-primary', { onclick: () => m.route.set(`/manage-reporters/${record.recordId}`) }, 'Kelola Reporter'),
                 isCustodian && isOwner && !record.final && m('button.btn.btn-primary', { onclick: () => _finalizeWithConfirmation(vnode) }, 'xFinalisasi')
             ]));
@@ -122,20 +113,20 @@ function _finalizeWithConfirmation(vnode) {
     }).then(() => {
         // Use the record from the current vnode state
         _finalizeRecord(vnode.state.record)
-        .then(() => {
-            alert('Record successfully finalized');
-            // Reload the data to reflect changes
-            _loadData(vnode.attrs.recordId, vnode.state);
-        })
-        .catch(err => {
-            console.error('Error finalizing record:', err);
-            const errorMessage = err.response ? err.response.data.error : err.message;
-            alert(`Error finalizing record: ${errorMessage}`);
-        });
+            .then(() => {
+                alert('Record successfully finalized');
+                // Reload the data to reflect changes
+                _loadData(vnode.attrs.recordId, vnode.state);
+            })
+            .catch(err => {
+                console.error('Error finalizing record:', err);
+                const errorMessage = err.response ? err.response.data.error : err.message;
+                alert(`Error finalizing record: ${errorMessage}`);
+            });
     })
-    .catch(() => {
-        console.log('Finalization cancelled');
-    });
+        .catch(() => {
+            console.log('Finalization cancelled');
+        });
 }
 
 const _row = (...cols) => m('.row', cols.map((col) => m('.col', col)));

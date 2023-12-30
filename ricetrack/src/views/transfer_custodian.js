@@ -24,7 +24,7 @@ const TransferCustodian = {
             api.get('agents')
         ]).then(([record, agents]) => {
             vnode.state.record = record;
-            vnode.state.agents = agents.filter(agent => (agent.key !== record.owner && agent.key !== record.custodian));
+            vnode.state.agents = agents.filter(agent => agent.key !== record.custodian);
             vnode.state.selectedAgent = vnode.state.agents[0].key;
             vnode.state.custodian = _agentByKey(agents, record.custodian).name;
         });

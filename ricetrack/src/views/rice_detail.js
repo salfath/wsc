@@ -12,7 +12,7 @@ const { _formatDateTime, _formatDate, _formatTimestamp, _formatPrice, _formatLoc
 const { _getProposal, _hasProposal, _answerProposal, _submitProposal, ROLE_TO_ENUM } = require('./proposalUtils');
 const { _revokeAuthorization, _authorizeReporter } = require('./reporterUtils');
 const { _updateProperty, _finalizeRecord } = require('./recordUtils');
-
+const { show, BasicModal } = require('../components/modals');
 
 const RiceDetail = {
     oninit(vnode) {
@@ -66,7 +66,7 @@ const RiceDetail = {
                 )
                 : null,
             _displayRecordDetails(record, vnode.state.owner, vnode.state.custodian),
-            _displayInteractionButtons(record, publicKey, isOwner, isCustodian)
+            _displayInteractionButtons(record, publicKey, isOwner, isCustodian, vnode)
         );
     }
 };
@@ -97,7 +97,7 @@ const _displayRecordDetails = (record, owner, custodian) => {
     ];
 };
 
-const _displayInteractionButtons = (record, publicKey, isOwner, isCustodian) => {
+const _displayInteractionButtons = (record, publicKey, isOwner, isCustodian, vnode) => {
     console.log('Final?: ', record.final)
 
     return m('.row.m-2',
@@ -108,9 +108,35 @@ const _displayInteractionButtons = (record, publicKey, isOwner, isCustodian) => 
                 isOwner && !record.final && m('button.btn.btn-primary', { onclick: () => m.route.set(`/transfer-ownership/${record.recordId}`) }, 'Jual'),
                 isCustodian && !record.final && m('button.btn.btn-primary', { onclick: () => m.route.set(`/transfer-custodian/${record.recordId}`) }, 'Ubah Kustodian'),
                 isOwner && !record.final && m('button.btn.btn-primary', { onclick: () => m.route.set(`/manage-reporters/${record.recordId}`) }, 'Kelola Reporter'),
-                isOwner && !record.final && m('button.btn.btn-primary', { onclick: () => _finalizeRecord(record) }, 'Finalisasi')
+                isCustodian && isOwner && !record.final && m('button.btn.btn-primary', { onclick: () => _finalizeWithConfirmation(vnode) }, 'xFinalisasi')
             ]));
 };
+
+// Fungsi untuk menampilkan konfirmasi finalisasi
+function _finalizeWithConfirmation(vnode) {
+    show(BasicModal, {
+        title: 'Konfirmasi Finalisasi',
+        body: 'Apakah Anda yakin ingin menyelesaikan record ini? Tindakan ini tidak dapat dibatalkan.',
+        acceptText: 'Ya',
+        cancelText: 'Tidak'
+    }).then(() => {
+        // Use the record from the current vnode state
+        _finalizeRecord(vnode.state.record)
+        .then(() => {
+            alert('Record successfully finalized');
+            // Reload the data to reflect changes
+            _loadData(vnode.attrs.recordId, vnode.state);
+        })
+        .catch(err => {
+            console.error('Error finalizing record:', err);
+            const errorMessage = err.response ? err.response.data.error : err.message;
+            alert(`Error finalizing record: ${errorMessage}`);
+        });
+    })
+    .catch(() => {
+        console.log('Finalization cancelled');
+    });
+}
 
 const _row = (...cols) => m('.row', cols.map((col) => m('.col', col)));
 const _labelProperty = (label, value) => [m('dl', m('dt', label), m('dd', value))];

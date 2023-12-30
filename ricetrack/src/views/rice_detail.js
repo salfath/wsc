@@ -38,31 +38,50 @@ const RiceDetail = {
         return m('.rice-detail',
             m('h1.text-center', record.recordId),
             // Menampilkan proposal yang perlu dijawab
-            proposalsToAnswer.length > 0
-                ? proposalsToAnswer.map(proposal =>
-                    m('.proposal-to-answer',
-                        m('p', `Proposal ${ROLE_TO_ENUM[proposal.role.toLowerCase()]} dari ${proposal.issuingAgent} kepada ${proposal.receivingAgent} untuk ${record.recordId}`),
-                        m('button.btn.btn-primary', {
-                            onclick: () => {
-                                console.log('Accepting proposal: ', proposal.role, ' for ', proposal.receivingAgent);
-                                _answerProposal(record, proposal.receivingAgent, ROLE_TO_ENUM[proposal.role.toLowerCase()], payloads.answerProposal.enum.ACCEPT)
-                                m.redraw(); // Trigger a redraw to update the UI
-                            }
-                        }, 'Terima'),
-                        m('button.btn.btn-danger', {
-                            onclick: () => {
-                                _answerProposal(record, proposal.receivingAgent, ROLE_TO_ENUM[proposal.role.toLowerCase()], payloads.answerProposal.enum.REJECT)
-                                m.redraw(); // Trigger a redraw to update the UI
-                            }
-                        }, 'Tolak')
-                    )
-                )
-                : null,
+            _renderProposalsToAnswer(vnode),
             _displayRecordDetails(record, vnode.state.owner, vnode.state.custodian),
             _displayInteractionButtons(record, publicKey, isOwner, isCustodian, vnode)
         );
     }
 };
+
+function _renderProposalsToAnswer(vnode) {
+    const record = vnode.state.record;
+    const pendingProposals = record.proposals.filter(proposal => proposal.receivingAgent === api.getPublicKey());
+
+    // Jika ada proposal tertunda, tampilkan modal
+    if (pendingProposals.length > 0) {
+        pendingProposals.forEach(proposal => {
+            _showProposalModal(vnode, proposal);
+        });
+    }
+}
+
+function _showProposalModal(vnode, proposal) {
+    show(BasicModal, {
+        title: 'Proposal Details',
+        body: m('div', [
+            m('p', `Anda diminta menjadi ${proposal.role.toLowerCase()} produk ini`),
+            m('p', `oleh ${proposal.issuingAgent}`),
+        ]),
+        acceptText: 'Terima',
+        cancelText: 'Tolak',
+        acceptFn: () => _handleProposalResponse(vnode, proposal, true), // true for accept
+        cancelFn: () => _handleProposalResponse(vnode, proposal, false) // false for reject
+    });
+}
+
+function _handleProposalResponse(vnode, proposal, accept) {
+    _answerProposal(vnode.state.record, proposal.receivingAgent, ROLE_TO_ENUM[proposal.role.toLowerCase()], accept ? payloads.answerProposal.enum.ACCEPT : payloads.answerProposal.enum.REJECT)
+        .then(() => {
+            alert(`Proposal ${accept ? 'accepted' : 'rejected'} successfully.`);
+            _loadData(vnode.attrs.recordId, vnode.state);
+            m.redraw();
+        }).catch(err => {
+            alert(`Error responding to proposal: ${err.message}`);
+        });
+}
+
 
 const _displayRecordDetails = (record, owner, custodian) => {
     return [
@@ -95,11 +114,11 @@ const _displayInteractionButtons = (record, publicKey, isOwner, isCustodian, vno
         m('.col.text-center',
             [
                 // isCustodian && m('button.btn.btn-primary', { onclick: () => m.route.set(`/update-properties/${record.recordId}`) }, 'Update Properties'),
-                m('button.btn.btn-primary', { onclick: () => m.route.set(`/rice-updates/${record.recordId}`) }, 'Lacak'),
+                m('button.btn.btn-primary', { onclick: () => m.route.set(`/rice-updates/${record.recordId}`) }, 'xLacak'),
                 isOwner && !record.final && m('button.btn.btn-primary', { onclick: () => m.route.set(`/transfer-ownership/${record.recordId}`) }, 'Jual'),
-                isOwner && !record.final && m('button.btn.btn-primary', { onclick: () => m.route.set(`/transfer-custodian/${record.recordId}`) }, 'Ubah Kustodian'),
+                isCustodian && !record.final && m('button.btn.btn-primary', { onclick: () => m.route.set(`/transfer-custodian/${record.recordId}`) }, 'Ubah Kustodian'),
                 isOwner && !record.final && m('button.btn.btn-primary', { onclick: () => m.route.set(`/manage-reporters/${record.recordId}`) }, 'Kelola Reporter'),
-                isCustodian && isOwner && !record.final && m('button.btn.btn-primary', { onclick: () => _finalizeWithConfirmation(vnode) }, 'xFinalisasi')
+                isCustodian && isOwner && !record.final && m('button.btn.btn-primary', { onclick: () => _finalizeWithConfirmation(vnode) }, 'Finalisasi')
             ]));
 };
 

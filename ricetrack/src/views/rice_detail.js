@@ -23,7 +23,7 @@ const RiceDetail = {
         _loadData(vnode.attrs.recordId, vnode.state);
         vnode.state.refreshId = setInterval(() => {
             _loadData(vnode.attrs.recordId, vnode.state);
-        }, 2000);
+        }, 60000);
     },
 
     onbeforeremove(vnode) {
@@ -41,10 +41,6 @@ const RiceDetail = {
 
                 // check whether there is a proposal to answer for this user, whether proposal to be an owner, a custodian, or a reporter
                 let proposalsToAnswer = record.proposals.filter(proposal => proposal.receivingAgent === publicKey);
-                console.log('Record: ', record);
-                console.log('Public Key: ', publicKey);
-                console.log('Proposals: ', record.proposals);
-                console.log('Proposal to answer: ', proposalsToAnswer);
 
         return m('.rice-detail',
             m('h1.text-center', record.recordId),
@@ -102,14 +98,16 @@ const _displayRecordDetails = (record, owner, custodian) => {
 };
 
 const _displayInteractionButtons = (record, publicKey, isOwner, isCustodian) => {
+    console.log('Final?: ', record.final)
+
     return m('.row.m-2',
         m('.col.text-center',
             [
                 // isCustodian && m('button.btn.btn-primary', { onclick: () => m.route.set(`/update-properties/${record.recordId}`) }, 'Update Properties'),
                 m('button.btn.btn-primary', { onclick: () => m.route.set(`/rice-updates/${record.recordId}`) }, 'Lacak'),
-                isOwner && m('button.btn.btn-primary', { onclick: () => m.route.set(`/transfer-ownership/${record.recordId}`) }, 'Jual'),
-                isCustodian && m('button.btn.btn-primary', { onclick: () => m.route.set(`/transfer-custodian/${record.recordId}`) }, 'Ubah Kustodian'),
-                isOwner && m('button.btn.btn-primary', { onclick: () => m.route.set(`/manage-reporters/${record.recordId}`) }, 'Kelola Reporter'),
+                isOwner && !record.final && m('button.btn.btn-primary', { onclick: () => m.route.set(`/transfer-ownership/${record.recordId}`) }, 'Jual'),
+                isCustodian && !record.final && m('button.btn.btn-primary', { onclick: () => m.route.set(`/transfer-custodian/${record.recordId}`) }, 'Ubah Kustodian'),
+                isOwner && !record.final && m('button.btn.btn-primary', { onclick: () => m.route.set(`/manage-reporters/${record.recordId}`) }, 'Kelola Reporter'),
                 isOwner && !record.final && m('button.btn.btn-primary', { onclick: () => _finalizeRecord(record) }, 'Finalisasi')
             ]));
 };

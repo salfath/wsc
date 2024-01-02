@@ -118,7 +118,7 @@ const ManageReporters = {
             onclick: async () => {
               // Pastikan reporterKey telah dipilih
               if (selectedReporterKey) {
-                await _authorizeReporter(recordId, selectedAgent.key, selectedProperty)
+                await _authorizeReporter(recordId, selectedReporterKey, selectedProperty)
                   .then(() => {
                     alert("Proposal menjadi reporter telah di kirim ke " +
                       _agentByKey(agents, selectedReporterKey).name + ".")

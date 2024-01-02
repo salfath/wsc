@@ -3,8 +3,8 @@ const api = require('../services/api');
 const payloads = require('../services/payloads');
 const { getPropertyValue } = require('../utils/records')
 const { _formatDateTime, _formatDate, _formatTimestamp, _formatPrice, _formatLocation } = require('./formatUtils');
-const { _hasProposal, _getProposal, _answerProposal, ROLE_TO_ENUM } = require('./proposalUtils');
-const { _finalizeRecord, _agentByKey } = require('./recordUtils');
+const { _answerProposal, ROLE_TO_ENUM } = require('./proposalUtils');
+const { _agentByKey, _finalizeRecord } = require('./recordUtils');
 const { show, BasicModal } = require('../components/modals');
 
 const RiceDetail = {
@@ -13,18 +13,6 @@ const RiceDetail = {
         vnode.state.agents = [];
         vnode.state.owner = null;
         vnode.state.custodian = null;
-        vnode.state.role = ''
-        vnode.state.proposal = null;
-
-
-        api.get('agents')
-            .then(agents => {
-                vnode.state.agents = agents;
-            })
-            .catch(error => {
-                console.error('Error loading agents:', error);
-            });
-
         _loadData(vnode.attrs.recordId, vnode.state);
         vnode.state.refreshId = setInterval(() => {
             _loadData(vnode.attrs.recordId, vnode.state);
@@ -36,71 +24,61 @@ const RiceDetail = {
     },
 
     view(vnode) {
-        if (!vnode.state.record || !vnode.state.agents || vnode.state.agents.length === 0) {
+        if (!vnode.state.record) {
             return m('.alert-warning', `Loading ${vnode.attrs.recordId}`);
         }
         const record = vnode.state.record;
         const publicKey = api.getPublicKey();
         const isOwner = record.owner === publicKey;
         const isCustodian = record.custodian === publicKey;
-        let role = vnode.state.role
 
-        console.log('role before', role);
-            
-        role = _hasProposal(record, publicKey, 'reporter') ? 'reporter' :
-            _hasProposal(record, publicKey, 'custodian') ? 'custodian' :
-                _hasProposal(record, publicKey, 'owner') ? 'owner' : '';
-
-        console.log('role after', role);
-        if (role) {
-            const proposal = _getProposal(record, publicKey, role);
-            _handlePendingProposal(vnode, proposal);
-            role = ''
-        }
+        // check whether there is a proposal to answer for this user, whether proposal to be an owner, a custodian, or a reporter
+        let proposalsToAnswer = record.proposals.filter(proposal => proposal.receivingAgent === publicKey);
+        console.log('Agents: ', vnode.state.agents)
 
         return m('.rice-detail',
             m('h1.text-center', record.recordId),
+            // Menampilkan proposal yang perlu dijawab
+            proposalsToAnswer.length > 0
+                ? proposalsToAnswer.map(proposal =>
+                    m('.proposal-to-answer',
+                        m('p', `${_agentByKey(vnode.state.agents, proposal.issuingAgent).name} meminta Anda menjadi ${proposal.role.toLowerCase()} produk ini.`),
+                        m('button.btn.btn-primary', {
+                            onclick: () => {
+                                _answerProposal(record, proposal.receivingAgent, ROLE_TO_ENUM[proposal.role.toLowerCase()], payloads.answerProposal.enum.ACCEPT)
+                                .then(() => {
+                                    return _loadData(record.recordId, vnode.state); // Memuat data terbaru
+                                })
+                                .then(() => {
+                                    m.redraw(); // Memperbarui UI setelah data dimuat
+                                })
+                                .catch(err => {
+                                    console.error('Error while answering proposal:', err);
+                                    // Handle error jika diperlukan
+                                });                            }
+                        }, 'Terima'),
+                        m('button.btn.btn-danger', {
+                            onclick: () => {
+                                _answerProposal(record, proposal.receivingAgent, ROLE_TO_ENUM[proposal.role.toLowerCase()], payloads.answerProposal.enum.REJECT)
+                                .then(() => {
+                                    return _loadData(record.recordId, vnode.state); // Memuat data terbaru
+                                })
+                                .then(() => {
+                                    m.redraw(); // Memperbarui UI setelah data dimuat
+                                })
+                                .catch(err => {
+                                    console.error('Error while answering proposal:', err);
+                                    // Handle error jika diperlukan
+                                });                            }
+                        }, 'Tolak')
+                    )
+                )
+                : null,
             _displayRecordDetails(record, vnode.state.owner, vnode.state.custodian),
             _displayInteractionButtons(record, publicKey, isOwner, isCustodian, vnode)
         );
     }
 };
-function _handlePendingProposal(vnode, proposal) {
-    show(BasicModal, {
-        title: 'Handle Pending Proposal',
-        body: m('div', [
-            m('p', `${_agentByKey(vnode.state.agents, proposal.issuingAgent).name} meminta Anda menjadi ${proposal.role.toLowerCase()} produk ini.`),
-        ]),
-        acceptText: 'Terima',
-        cancelText: 'Tolak',
-    }).then(() => {
-        console.log('Proposal diterima.');
-        _answerProposal(vnode.state.record, proposal.receivingAgent, ROLE_TO_ENUM[proposal.role.toLowerCase()], payloads.answerProposal.enum.ACCEPT)
-            .then(() => {
-                alert('Proposal diterima');
-                // Reload the data to reflect changes
-                _loadData(vnode.attrs.recordId, vnode.state);
-            })
-            .catch(err => {
-                console.error('Gagal menerima proposal:', err);
-                const errorMessage = err.response ? err.response.data.error : err.message;
-                alert(`Gagal menerima proposal: ${errorMessage}`);
-            });
-    }).catch(() => {
-        _answerProposal(vnode.state.record, proposal.receivingAgent, ROLE_TO_ENUM[proposal.role.toLowerCase()], payloads.answerProposal.enum.REJECT)
-            .then(() => {
-                alert('Proposal ditolak.');
-                // Reload the data to reflect changes
-                _loadData(vnode.attrs.recordId, vnode.state);
-
-            })
-            .catch(err => {
-                console.error('Gagal menolak proposal:', err);
-                const errorMessage = err.response ? err.response.data.error : err.message;
-                alert(`Gagal menolak proposal: ${errorMessage}`);
-            });
-    });
-}
 
 const _displayRecordDetails = (record, owner, custodian) => {
     return [
@@ -137,7 +115,7 @@ const _displayInteractionButtons = (record, publicKey, isOwner, isCustodian, vno
                 isOwner && !record.final && m('button.btn.btn-primary', { onclick: () => m.route.set(`/transfer-ownership/${record.recordId}`) }, 'Jual'),
                 isCustodian && !record.final && m('button.btn.btn-primary', { onclick: () => m.route.set(`/transfer-custodian/${record.recordId}`) }, 'Ubah Kustodian'),
                 isOwner && !record.final && m('button.btn.btn-primary', { onclick: () => m.route.set(`/manage-reporters/${record.recordId}`) }, 'Kelola Reporter'),
-                isCustodian && isOwner && !record.final && m('button.btn.btn-primary', { onclick: () => _finalizeWithConfirmation(vnode) }, 'Finalisasi')
+                isOwner && !record.final && m('button.btn.btn-primary', { onclick: () => _finalizeWithConfirmation(vnode) }, 'Finalisasi')
             ]));
 };
 
@@ -180,6 +158,7 @@ const _loadData = (recordId, state) => {
         .then(record => Promise.all([record, api.get('agents')]))
         .then(([record, agents]) => {
             state.record = record;
+            state.agents = agents;
             state.owner = agents.find(agent => agent.key === record.owner);
             state.custodian = agents.find(agent => agent.key === record.custodian);
         });

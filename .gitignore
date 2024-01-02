@@ -20,3 +20,4 @@
 /docs/build/
 /docs/source/_autogen/
 /docs/source/cli/output/
+dir_to_text.sh

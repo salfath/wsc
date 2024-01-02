@@ -48,7 +48,7 @@ const _submitProposal = (record, role, publicKey) => {
 /**
  * Menjawab proposal yang ada.
  */
-const _answerProposal = (record, publicKey, role, response) => {
+const _answerProposal = async (record, publicKey, role, response) => {
 
   console.log('Answering proposal', record.recordId, publicKey, role, response)
   let answerPayload = payloads.answerProposal({
@@ -58,13 +58,12 @@ const _answerProposal = (record, publicKey, role, response) => {
     response
   });
 
-  return transactions.submit([answerPayload], true)
-    .then(() => {
-      console.log('Successfully submitted answer');
-    })
-    .catch(err => {
-      console.error('Error in submitting answer:', err);
-    });
+  try {
+    await transactions.submit([answerPayload], true);
+    console.log('Successfully submitted answer');
+  } catch (err) {
+    console.error('Error in submitting answer:', err);
+  }
 };
 
 module.exports = {

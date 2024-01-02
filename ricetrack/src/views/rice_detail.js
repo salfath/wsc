@@ -34,7 +34,6 @@ const RiceDetail = {
 
         // check whether there is a proposal to answer for this user, whether proposal to be an owner, a custodian, or a reporter
         let proposalsToAnswer = record.proposals.filter(proposal => proposal.receivingAgent === publicKey);
-        console.log('Agents: ', vnode.state.agents)
 
         return m('.rice-detail',
             m('h1.text-center', record.recordId),

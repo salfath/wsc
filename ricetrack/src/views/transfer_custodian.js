@@ -5,9 +5,7 @@ const moment = require('moment');
 const payloads = require('../services/payloads');
 const transactions = require('../services/transactions');
 const api = require('../services/api');
-const parsing = require('../services/parsing');
-const {getPropertyValue} = require('../utils/records');
-const {_agentByKey} = require('./recordUtils')
+const { _agentByKey } = require('./recordUtils')
 
 const TransferCustodian = {
     oninit: (vnode) => {
@@ -31,10 +29,8 @@ const TransferCustodian = {
     },
 
     view: (vnode) => {
-        console.log('User in tc: ', api.getPublicKey());
-        console.log('Record in tc: ', vnode.state.record);
-        console.log('Selected Agent in tc: ', vnode.state.selectedAgent);
-        
+
+
         return m('.transfer-custodian',
             m('h2', `Ubah Kustodian`),
             m('h2', { style: { 'font-size': 'smaller' } }, `${vnode.attrs.recordId}`),
@@ -77,7 +73,7 @@ const _submitTransfer = (vnode) => {
         role: payloads.createProposal.enum.CUSTODIAN,
         properties: [{ name: 'tgltransaksi', intValue: timestamp },]
     });
-    
+
     transactions.submit([transferPayload], true)
         .then(() => {
             console.log('Successfully submitted transfer proposal');
@@ -87,7 +83,7 @@ const _submitTransfer = (vnode) => {
         .catch(err => {
             console.error('Failed to submit custodian transfer proposal:', err)
             alert('Failed to submit custodian transfer proposal.')
-          })
+        })
 }
 
 module.exports = TransferCustodian;

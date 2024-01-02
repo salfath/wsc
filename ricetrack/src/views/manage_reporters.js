@@ -2,18 +2,18 @@
 
 const m = require('mithril');
 const api = require('../services/api');
-const { revokeReporter, authorizeReporter, reporters } = require('./reporterUtils');
+const { _revokeAuthorization, _authorizeReporter, _reporters } = require('./reporterUtils');
+const { _agentByKey } = require('./recordUtils')  
 
-const _loadData = async (recordId, component) => {
+const _loadData = async (recordId, state) => {
   try {
 
     const record = await api.get(`records/${recordId}`);
-    component.record = record;
+    state.record = record;
     const agents = await api.get('agents');
-
-    component.currentReporters = await getCurrentReporters(record, component);
-
-    component.potentialReporters = getPotentialReporters(agents, record, component.currentReporters);
+    state.agents = agents;
+    state.currentReporters =  getCurrentReporters(record);
+    state.potentialReporters = getPotentialReporters(agents, record, state.currentReporters);
 
     // Trigger a redraw in Mithril
     m.redraw();
@@ -22,33 +22,25 @@ const _loadData = async (recordId, component) => {
   }
 };
 
-const getCurrentReporters = async (record, component) => {
-  try {
-    const agents = await api.get('agents');
-    const publicKey = await api.getPublicKey();
-    return reporters(record, agents).filter(reporter =>
-      reporter.key !== publicKey &&
-      reporter.key !== record.owner &&
-      reporter.key !== record.custodian
-    );
-  } catch (error) {
-    console.error('Error in getCurrentReporters:', error);
-    throw error;
-  }
+const getCurrentReporters = (record) => {
+  const publicKey = api.getPublicKey(); // Dapatkan public key pengguna saat ini
+  const allReporters = _reporters(record);
+  console.log('allReporters:', allReporters);
+  return Object.entries(allReporters)
+      .filter(([key, _]) => key !== publicKey && key !== record.owner)
+      .map(([key, _]) => ({ key })); // Mengembalikan array objek dengan kunci
 };
-
 
 const getPotentialReporters = (agents, record, currentReporters) => {
-  const currentReporterKeys = currentReporters.map(reporter => reporter.key);
-  const publicKey = api.getPublicKey();
+const currentReporterKeys = new Set(currentReporters.map(reporter => reporter.key));
 
-  return agents.filter(agent =>
-    !currentReporterKeys.includes(agent.key) &&
-    agent.key !== record.owner &&
-    agent.key !== record.custodian &&
-    agent.key !== publicKey
-  );
+return agents.filter(agent =>
+  !currentReporterKeys.has(agent.key) &&  // Memeriksa apakah kunci agen tidak ada di currentReporters
+  agent.key !== record.owner &&
+  agent.key !== record.custodian
+);
 };
+
 
 const ManageReporters = {
   oninit(vnode) {
@@ -82,6 +74,8 @@ const ManageReporters = {
 
     console.log('recordId:', recordId);
     console.log('xselectedReporterKey:', selectedReporterKey);
+    console.log('currentReporters:', currentReporters);
+    console.log('potentialReporters:', potentialReporters);
 
     return m('.manage-reporters',
       [
@@ -90,10 +84,10 @@ const ManageReporters = {
         m('h4', 'Current Reporters:'),
         currentReporters.map(reporter =>
           m('div',
-            m('h6', `${reporter.name}`),
+            m('h6', `${_agentByKey(vnode.state.agents, reporter).name}`),
             m('button', { 
               onclick: () => {
-              revokeReporter(recordId, reporter.key, selectedProperty)
+                _revokeAuthorization(recordId, reporter, selectedProperty)
               _loadData(vnode.attrs.recordId, vnode.state)
             }
              }, 'Revoke')
@@ -111,7 +105,7 @@ const ManageReporters = {
           ),
           m('button', {
             onclick: () => {
-              authorizeReporter(recordId, selectedReporterKey, selectedProperty)
+              _authorizeReporter(recordId, selectedReporterKey, selectedProperty)
               _loadData(vnode.attrs.recordId, vnode.state)
             }
           }, 'Authorize')

@@ -139,6 +139,16 @@
       "hashedPassword": "gtzI4rJfOnK1zIMq0h6yP2xhp1359w/gxVcia0QsmcU="
     },
     {
+      "username": "nita",
+      "password": "nita",
+      "publicKey": "0256887bcdf287f4615a6d70ea000ec6656e07130bdc51761c0b93e174c2faf366",
+      "name": "Nita",
+      "email": "nita@ui.net",
+      "privateKey": "8a9730473deab8cce54739184770d7750856eebbb70a70fd3635a424b7c64c89",
+      "encryptedKey": "{\"iv\":\"WzAYx3emuEPoR4FmbFGSiw==\",\"v\":1,\"iter\":10000,\"ks\":128,\"ts\":64,\"mode\":\"ccm\",\"adata\":\"\",\"cipher\":\"aes\",\"salt\":\"77Bi/kRDEUQ=\",\"ct\":\"Fxyl7hWK024UEGbyq4OuVIboWrMEWXbWwK4RS6m63m+18ieXB67yMxutspa358QT+GaLoOwOAF9Cc5h8xdlUalVWJR5vEwr4\"}",
+      "hashedPassword": "w09sBGIZwaNoe/ioR4mBWvxQcGvf5UOGBkXS4kPN0Sk="
+    },
+    {
       "username": "nurul",
       "password": "nurul",
       "publicKey": "0291cd33019aae3408e886818e5b4bde9ad673a470237161ea730222f1c7c4b79d",

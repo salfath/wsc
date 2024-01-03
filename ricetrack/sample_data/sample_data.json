@@ -139,6 +139,17 @@
       "hashedPassword": "gtzI4rJfOnK1zIMq0h6yP2xhp1359w/gxVcia0QsmcU="
     },
     {
+      "username": "galuh",
+      "password": "galuh",
+      "publicKey": "02f4169ec3524e670aea88ca0d63c3aaa08bd20742b7e5c538b94eec32fe11d1e2",
+      "name": "Galuh",
+      "email": "galuh@jentera.id",
+      "privateKey": "6b20193303b8894e04c290f057705ee09268600cab40233cd5ea0162439e1ae8",
+      "encryptedKey": "{\"iv\":\"V2/NvLJhHqM/vIRDuGMqyQ==\",\"v\":1,\"iter\":10000,\"ks\":128,\"ts\":64,\"mode\":\"ccm\",\"adata\":\"\",\"cipher\":\"aes\",\"salt\":\"5ZCfEf+ktdM=\",\"ct\":\"qoBfz17LQ1hhSVgKX8UPlLXnr8FQkFDsH2vXtphyLSl3L8nO36tmtuOwY+xxwZl/5BJCON4xscgjIujT2NGJ5l5L3N1I0hkF\"}",
+      "hashedPassword": "gtzI4rJfOnK1zIMq0h6yP2xhp1359w/gxVcia0QsmcU="
+    },
+    
+    {
       "username": "nurul",
       "password": "nurul",
       "publicKey": "0291cd33019aae3408e886818e5b4bde9ad673a470237161ea730222f1c7c4b79d",

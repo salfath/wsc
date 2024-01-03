@@ -21,13 +21,16 @@ const LoginForm = {
             username: vnode.state.username,
             password: api.hashPassword(vnode.state.password)
           }
+          console.log('hashedPassword2: ', credentials.password)
           api.post('authorization', credentials)
             .then(res => {
               api.setAuth(res.authorization)
+              console.log('encryptedKey2: ', res.encryptedKey)
               transactions.setPrivateKey(vnode.state.password,
                                          res.encryptedKey)
               m.route.set('/')
             })
+
         }
       },
       m('legend', 'Login Agent'),

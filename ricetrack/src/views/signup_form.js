@@ -12,8 +12,8 @@ const passwordCard = state => {
   const setter = forms.stateSetter(state)
   const validator = forms.validator(
     () => state.password === state.confirm,
-    'Las contraseñas no coincided',
-    'confirmar'
+    'Kata sandi tidak cocok', // Translated 'Las contraseñas no coincided'
+    'konfirmasi' // Translated 'confirmar'
   )
   const passwordField = (id, placeholder) => {
     return forms.field(
@@ -28,19 +28,19 @@ const passwordCard = state => {
     )
   }
 
-  return forms.group('Password', [
+  return forms.group('Kata Sandi', [ // Translated 'Password'
     m('.card.text-center.border-warning',
-      m('.card-header.text-white.bg-warning', m('em', m('strong', 'ATENCIÓN!'))),
+      m('.card-header.text-white.bg-warning', m('em', m('strong', 'PERHATIAN!'))), // Translated 'ATENCIÓN!'
       m('.card-body.text-warning.bg-light',
         m('p.card-text',
-          'Esta contraseña será utilizada como clave secreta para encriptar la cuenta.',
+          'Kata sandi ini akan digunakan sebagai kunci rahasia untuk mengenkripsi akun.', // Translated text
           m('em',
-            ' Si se pierde u olvida será ',
-            m('strong', 'imposible'),
-            ' recuperar la cuenta.')),
-        m('p.card-text', 'Guárdala de manera segura.'),
-        passwordField('password', 'Contraseña...'),
-        passwordField('confirm', 'Confirma contraseña...')))
+            ' Jika hilang atau lupa akan ',
+            m('strong', 'mustahil'),
+            ' untuk memulihkan akun.')), // Translated text
+        m('p.card-text', 'Simpanlah dengan aman.'), // Translated 'Guárdala de manera segura.'
+        passwordField('password', 'Kata Sandi...'), // Translated 'Contraseña...'
+        passwordField('confirm', 'Konfirmasi Kata Sandi...'))) // Translated 'Confirma contraseña...'
   ])
 }
 
@@ -48,10 +48,9 @@ const userSubmitter = state => e => {
   e.preventDefault()
 
   const keys = transactions.makePrivateKey(state.password)
-  console.log('encryptedKey: ', keys.encryptedKey)
+
   const user = _.assign(keys, _.pick(state, 'username', 'email'))
   user.password = api.hashPassword(state.password)
-  console.log('hashedPassword: ', user.password)
 
   const agent = payloads.createAgent(_.pick(state, 'name'))
 
@@ -70,21 +69,21 @@ const SignupForm = {
 
     return m('.signup-form', [
       m('form', { onsubmit: userSubmitter(vnode.state) },
-      m('legend', 'Crear Administrador'),
-      forms.textInput(setter('name'), 'Nombre'),
+      m('legend', 'Buat Admin'), // Translated 'Crear Administrador'
+      forms.textInput(setter('name'), 'Nama'), // Translated 'Nombre'
       forms.emailInput(setter('email'), 'Email'),
-      forms.textInput(setter('username'), 'Nombre de Usuario'),
+      forms.textInput(setter('username'), 'Nama Pengguna'), // Translated 'Nombre de Usuario'
       passwordCard(vnode.state),
       m('.container.text-center',
-        'O puede entrar ',
+        'Atau masuk ', // Translated 'O puede entrar'
         m('a[href="/login"]',
           { oncreate: m.route.link },
-          'si ya está registrado')),
+          'jika sudah terdaftar')), // Translated 'si ya está registrado'
       m('.form-group',
         m('.row.justify-content-end.align-items-end',
           m('col-2',
             m('button.btn.btn-primary',
-              'Crear')))))
+              'Buat'))))) // Translated 'Crear'
     ])
   }
 }

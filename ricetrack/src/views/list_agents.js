@@ -1,19 +1,4 @@
-/**
- * Copyright 2017 Intel Corporation
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ----------------------------------------------------------------------------
- */
+
 'use strict'
 
 const m = require('mithril')
@@ -25,17 +10,25 @@ const api = require('../services/api')
 const PAGE_SIZE = 50
 
 const AgentList = {
-  oninit (vnode) {
+  oninit(vnode) {
     vnode.state.agents = []
     vnode.state.filteredAgents = []
     vnode.state.currentPage = 0
+    vnode.state.currentFilter = () => true
+
+    vnode.state.applyCurrentFilter = () => {
+      vnode.state.filteredAgents = vnode.state.agents.filter(vnode.state.currentFilter)
+    }
 
     const refresh = () => {
       api.get('agents').then((agents) => {
         vnode.state.agents = sortBy(agents, 'name')
-        vnode.state.filteredAgents = vnode.state.agents
+        vnode.state.applyCurrentFilter()  // Use the method
       })
-        .then(() => { vnode.state.refreshId = setTimeout(refresh, 2000) })
+      .then(() => {
+        m.redraw() // Explicitly trigger a redraw
+        vnode.state.refreshId = setTimeout(refresh, 2000)
+      })
     }
 
     refresh()
@@ -79,7 +72,8 @@ const AgentList = {
 const _controlButtons = (vnode, publicKey) => {
   if (publicKey) {
     let filterAgents = (f) => {
-      vnode.state.filteredAgents = vnode.state.agents.filter(f)
+      vnode.state.currentFilter = f
+      vnode.state.applyCurrentFilter()
     }
 
     return [
@@ -87,7 +81,10 @@ const _controlButtons = (vnode, publicKey) => {
         m(FilterGroup, {
           ariaLabel: 'Filter Based on Ownership',
           filters: {
-            'All': () => { vnode.state.filteredAgents = vnode.state.agents },
+            'All': () => { 
+              vnode.state.currentFilter = () => true; // Reset filter for "All"
+              vnode.state.applyCurrentFilter();
+            },
             'Owners': () => filterAgents(agent => agent.owns.length > 0),
             'Custodians': () => filterAgents(agent => agent.custodian.length > 0),
             'Reporters': () => filterAgents(agent => agent.reports.length > 0)
@@ -102,6 +99,7 @@ const _controlButtons = (vnode, publicKey) => {
     ]
   }
 }
+
 
 const _pagingButtons = (vnode) =>
   m(PagingButtons, {

@@ -10,7 +10,7 @@ const forms = require('../components/forms')
  * The Form for authorizing an existing user.
  */
 const LoginForm = {
-  view (vnode) {
+  view(vnode) {
     const setter = forms.stateSetter(vnode.state)
 
     return m('.login-form', [
@@ -27,26 +27,29 @@ const LoginForm = {
               api.setAuth(res.authorization)
               console.log('encryptedKey2: ', res.encryptedKey)
               transactions.setPrivateKey(vnode.state.password,
-                                         res.encryptedKey)
+                res.encryptedKey)
               m.route.set('/')
             })
 
         }
       },
-      m('legend', 'Login Agent'),
-      forms.textInput(setter('username'), 'Username'),
-      forms.passwordInput(setter('password'), 'Password'),
-      m('.container.text-center',
-        'Or you can ',
-        m('a[href="/signup"]',
-          { oncreate: m.route.link },
-          'create a new Agent')),
-      m('.form-group',
-        m('.row.justify-content-end.align-items-end',
-          m('col-2',
-            m('button.btn.btn-primary',
-              {'data-toggle': 'modal', 'data-target': '#modal'},
-              'Login')))))
+        m('legend', 'Login Agent'),
+        forms.textInput({
+          oncreate: vnode => vnode.dom.focus(),
+          oninput: setter('username')
+        }, 'Username'),
+        forms.passwordInput(setter('password'), 'Password'),
+        m('.container.text-center',
+          'Or you can ',
+          m('a[href="/signup"]',
+            { oncreate: m.route.link },
+            'create a new Agent')),
+        m('.form-group',
+          m('.row.justify-content-end.align-items-end',
+            m('col-2',
+              m('button.btn.btn-primary',
+                { 'data-toggle': 'modal', 'data-target': '#modal' },
+                'Login')))))
     ])
   }
 }

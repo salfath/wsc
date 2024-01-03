@@ -129,6 +129,27 @@
 
   "agents": [
     {
+      "username": "aan",
+      "password": "aan",
+      "publicKey": "03e0fd9c5300cef3e8a06d96eec7beaa788e35d765e3162f1c2f298ed7bd42d11a",
+      "name": "Aan",
+      "email": "aan@payluck.id",
+      "privateKey": "a55c61402e8d8d6d68fb89bce1ed2d33acb0bb0b7900d7570157aff4522a0ce2",
+      "encryptedKey": "{\"iv\":\"V2/NvLJhHqM/vIRDuGMqyQ==\",\"v\":1,\"iter\":10000,\"ks\":128,\"ts\":64,\"mode\":\"ccm\",\"adata\":\"\",\"cipher\":\"aes\",\"salt\":\"5ZCfEf+ktdM=\",\"ct\":\"qoBfz17LQ1hhSVgKX8UPlLXnr8FQkFDsH2vXtphyLSl3L8nO36tmtuOwY+xxwZl/5BJCON4xscgjIujT2NGJ5l5L3N1I0hkF\"}",
+      "hashedPassword": "gtzI4rJfOnK1zIMq0h6yP2xhp1359w/gxVcia0QsmcU="
+    },
+    {
+      "username": "nurul",
+      "password": "nurul",
+      "publicKey": "0291cd33019aae3408e886818e5b4bde9ad673a470237161ea730222f1c7c4b79d",
+      "name": "Nurul",
+      "email": "nurul@payluck.id",
+      "privateKey": "471e8436469359c0926ac5a0c3803b6dcd65ed3cf4f76ed743b5d0f4be6ec2bb",
+      "encryptedKey": "{\"iv\":\"7iOLctjSTFEnDYr6z2yClQ==\",\"v\":1,\"iter\":10000,\"ks\":128,\"ts\":64,\"mode\":\"ccm\",\"adata\":\"\",\"cipher\":\"aes\",\"salt\":\"IZ4B8uj/p3I=\",\"ct\":\"NxZxgMMiY7hVcCJTbnDzssp4+rmj1mQ1ror8lTm8OE1TCmY+Gd01H/aFzfs1C0vOIQ2ooiv6B9Kd9torInhPPMI2QlJ2a+Dl\"}",
+      "hashedPassword": "dl2UpUhZ8dtefAOFma5bSniOHOyEAjXo+KqlDQsT0Ag="
+    },
+    
+    {
       "username": "ahab",
       "password": "ahab",
       "publicKey": "03ba003ea48e3599f73939b7908ca361cf539cc0baa7b0a049c590bcc46e2ef55a",

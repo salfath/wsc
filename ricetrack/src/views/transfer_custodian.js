@@ -28,12 +28,13 @@ const TransferCustodian = {
     },
 
     view: (vnode) => {
-        console.log('Record: ', vnode.state.record);
-        console.log('Proposals: ', vnode.state.proposals);
-        console.log('Record ID: ', vnode.attrs.recordId);
 
         const publicKey = vnode.state.publicKey;
         console.log('Public Key: ', publicKey);
+        console.log('Record: ', vnode.state.record);
+        console.log('Proposals: ', vnode.state.proposals);
+        console.log('Record ID: ', vnode.attrs.recordId);
+        console.log('Selected Agent: ', vnode.state.selectedAgent);
         let proposalsToAnswer = vnode.state.proposals.filter(proposal =>
             (proposal.issuingAgent === publicKey) && (proposal.role.toLowerCase() === 'custodian'));
         let showNewCustodianForm = proposalsToAnswer.length === 0;
@@ -70,17 +71,7 @@ const TransferCustodian = {
             showNewCustodianForm ? [
                 m('h2', `Ubah Kustodian`),
                 m('h2', { style: { 'font-size': 'smaller' } }, `${vnode.attrs.recordId}`),
-                m('label', 'Kustodian Saat Ini: ' + vnode.state.custodian),
-                m('.form-group',
-                    m('label', 'Tanggal Transaksi:'),
-                    m('input.form-control', {
-                        type: 'datetime-local',
-                        value: vnode.state.tgltransaksi,
-                        onchange: m.withAttr('value', value => {
-                            vnode.state.tgltransaksi = value;
-                        })
-                    })
-                ),
+                m('label', 'Kustodian Saat Ini: ' + vnode.state.custodian),                
                 m('.form-group',
                     m('label', 'Pilih Kustodian Baru: '),
                     m('select.form-control', {
@@ -120,9 +111,8 @@ const _submitTransfer = async (vnode) => {
         recordId: vnode.state.record.recordId,
         receivingAgent: vnode.state.selectedAgent,
         role: payloads.createProposal.enum.CUSTODIAN,
-        properties: [{ name: 'tgltransaksi', intValue: timestamp },]
     });
-
+    // properties: [{ name: 'tgltransaksi', intValue: timestamp },]
     try {
         await transactions.submit([transferPayload], true);
         console.log('Successfully submitted transfer proposal');

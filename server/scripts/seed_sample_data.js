@@ -115,7 +115,7 @@ protos.compile()
 
     return submitTxns(recordAdditions)
   })
-
+/*
   // Transfer Custodianship
   .then(() => {
     console.log('Transferring Custodianship . . .')
@@ -145,7 +145,7 @@ protos.compile()
 
     return submitTxns(custodianAnswers)
   })
-
+*/
   // Authorize New Reporters
   .then(() => {
     console.log('Authorizing New Reporters . . .')

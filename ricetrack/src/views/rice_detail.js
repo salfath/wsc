@@ -2,7 +2,7 @@ const m = require('mithril');
 const api = require('../services/api');
 const payloads = require('../services/payloads');
 const { getPropertyValue } = require('../utils/records')
-const { _formatDateTime, _formatDate, _formatTimestamp, _formatPrice, _formatLocation } = require('./formatUtils');
+const { formatDateTime, formatDate, formatTimestamp, formatCurrency, formatLocation } = require('./formatUtils');
 const { _answerProposal, ROLE_TO_ENUM } = require('./proposalUtils');
 const { _agentByKey, _finalizeRecord } = require('./recordUtils');
 const { show, BasicModal } = require('../components/modals');
@@ -36,7 +36,7 @@ const RiceDetail = {
         let proposalsToAnswer = record.proposals.filter(proposal => proposal.receivingAgent === publicKey);
 
         return m('.rice-detail',
-            m('h1.text-center', record.recordId),
+            m('h3.text-center', record.recordId),
             // Menampilkan proposal yang perlu dijawab
             proposalsToAnswer.length > 0
                 ? proposalsToAnswer.map(proposal =>
@@ -45,30 +45,32 @@ const RiceDetail = {
                         m('button.btn.btn-primary', {
                             onclick: () => {
                                 _answerProposal(record, proposal.receivingAgent, ROLE_TO_ENUM[proposal.role.toLowerCase()], payloads.answerProposal.enum.ACCEPT)
-                                .then(() => {
-                                    return _loadData(record.recordId, vnode.state); // Memuat data terbaru
-                                })
-                                .then(() => {
-                                    m.redraw(); // Memperbarui UI setelah data dimuat
-                                })
-                                .catch(err => {
-                                    console.error('Error while answering proposal:', err);
-                                    // Handle error jika diperlukan
-                                });                            }
+                                    .then(() => {
+                                        return _loadData(record.recordId, vnode.state); // Memuat data terbaru
+                                    })
+                                    .then(() => {
+                                        m.redraw(); // Memperbarui UI setelah data dimuat
+                                    })
+                                    .catch(err => {
+                                        console.error('Error while answering proposal:', err);
+                                        // Handle error jika diperlukan
+                                    });
+                            }
                         }, 'Terima'),
                         m('button.btn.btn-danger', {
                             onclick: () => {
                                 _answerProposal(record, proposal.receivingAgent, ROLE_TO_ENUM[proposal.role.toLowerCase()], payloads.answerProposal.enum.REJECT)
-                                .then(() => {
-                                    return _loadData(record.recordId, vnode.state); // Memuat data terbaru
-                                })
-                                .then(() => {
-                                    m.redraw(); // Memperbarui UI setelah data dimuat
-                                })
-                                .catch(err => {
-                                    console.error('Error while answering proposal:', err);
-                                    // Handle error jika diperlukan
-                                });                            }
+                                    .then(() => {
+                                        return _loadData(record.recordId, vnode.state); // Memuat data terbaru
+                                    })
+                                    .then(() => {
+                                        m.redraw(); // Memperbarui UI setelah data dimuat
+                                    })
+                                    .catch(err => {
+                                        console.error('Error while answering proposal:', err);
+                                        // Handle error jika diperlukan
+                                    });
+                            }
                         }, 'Tolak')
                     )
                 )
@@ -82,24 +84,24 @@ const RiceDetail = {
 const _displayRecordDetails = (record, owner, custodian) => {
     return [
         _row(
-            _labelProperty('Created', _formatTimestamp(record.creationTime)),
-            _labelProperty('Updated', _formatTimestamp(record.updatedTime))
+            _labelProperty('Created', formatTimestamp(record.creationTime)),
+            _labelProperty('Updated', formatTimestamp(record.updatedTime))
         ),
         _row(
             _labelProperty('Pemilik', _agentLink(owner)),
             _labelProperty('Kustodian', _agentLink(custodian))
         ),
         _row(
-            _labelProperty('Tanggal Transaksi Terakhir', _formatDateTime(getPropertyValue(record, 'tgltransaksi', 0))),
-            _labelProperty('Kedaluwarsa', _formatDate(getPropertyValue(record, 'kedaluwarsa', 0)))
+            _labelProperty('Tanggal Transaksi Terakhir', formatDateTime(getPropertyValue(record, 'tgltransaksi', 0))),
+            _labelProperty('Kedaluwarsa', formatDate(getPropertyValue(record, 'kedaluwarsa', 0)))
         ),
         _row(
             _labelProperty('Varietas', getPropertyValue(record, 'varietas')),
             _labelProperty('Berat (kg)', getPropertyValue(record, 'berat', 0))
         ),
         _row(
-            _labelProperty('Harga', _formatPrice(getPropertyValue(record, 'harga'))),
-            _labelProperty('Lokasi', _propLink(record, 'lokasi', _formatLocation(getPropertyValue(record, 'lokasi'))))
+            _labelProperty('Harga', formatCurrency(getPropertyValue(record, 'harga'))),
+            _labelProperty('Lokasi', _propLink(record, 'lokasi', formatLocation(getPropertyValue(record, 'lokasi'))))
 
         )
     ];

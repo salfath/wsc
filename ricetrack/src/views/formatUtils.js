@@ -5,23 +5,27 @@ const parsing = require('../services/parsing');  // Asumsi module parsing tersed
 /**
  * Memformat timestamp menjadi string tanggal dengan format 'DD-MM-YYYY HH:mm'.
  */
-const _formatDateTime = (timestamp) => {
-  const seconds = timestamp / 1000; // Konversi dari milidetik ke detik
-  return moment.unix(seconds).format('DD-MM-YYYY HH:mm');
+const formatDateTime = (sec) => {
+  if (!sec) {
+    sec = Date.now() / 1000;
+  }
+  return moment.unix(sec).format('DD-MM-YYYY HH:mm');
 };
 
 /**
  * Memformat timestamp menjadi string tanggal dengan format 'DD-MM-YYYY'.
  */
-const _formatDate = (timestamp) => {
-  const seconds = timestamp / 1000; // Konversi dari milidetik ke detik
-  return moment.unix(seconds).format('DD-MM-YYYY');
+const formatDate = (sec) => {
+  if (!sec) {
+    sec = Date.now() / 1000;
+  }
+  return moment.unix(sec).format('DD-MM-YYYY');
 };
 
 /**
  * Memformat timestamp menjadi string tanggal dengan format 'YYYY-MM-DD'.
  */
-const _formatTimestamp = (sec) => {
+const formatTimestamp = (sec) => {
   if (!sec) {
     sec = Date.now() / 1000;
   }
@@ -31,9 +35,9 @@ const _formatTimestamp = (sec) => {
 /**
  * Memformat harga menjadi string dengan format mata uang Indonesia 'Rp'.
  */
-const _formatPrice = (value) => {
+const formatCurrency = (value) => {
   if (value) {
-    return `Rp ${parseInt(value).toLocaleString('id')}`;
+    return `Rp. ${parseInt(value).toLocaleString('id')}`;
   }
   return 'N/A';
 };
@@ -41,7 +45,7 @@ const _formatPrice = (value) => {
 /**
  * Memformat data lokasi menjadi string koordinat.
  */
-const _formatLocation = (lokasi) => {
+const formatLocation = (lokasi) => {
   if (lokasi && lokasi.latitude !== undefined && lokasi.longitude !== undefined) {
     let latitude = parsing.toFloat(lokasi.latitude);
     let longitude = parsing.toFloat(lokasi.longitude);
@@ -51,9 +55,9 @@ const _formatLocation = (lokasi) => {
 };
 
 module.exports = {
-  _formatDateTime,
-  _formatDate,
-  _formatTimestamp,
-  _formatPrice,
-  _formatLocation
+  formatDateTime,
+  formatDate,
+  formatTimestamp,
+  formatCurrency,
+  formatLocation
 };

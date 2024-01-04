@@ -28,10 +28,10 @@ const _getPropTimeByComparison = (compare) => (record) => {
   }
 
   return Object.values(record.updates.properties)
-      .reduce((acc, updates) => acc.concat(updates), [])
-      .reduce((selected, update) =>
-              compare(selected.timestamp, update.timestamp) ? update : selected)
-      .timestamp
+    .reduce((acc, updates) => acc.concat(updates), [])
+    .reduce((selected, update) =>
+      compare(selected.timestamp, update.timestamp) ? update : selected)
+    .timestamp
 }
 
 const getLatestPropertyUpdateTime =
@@ -40,21 +40,39 @@ const getLatestPropertyUpdateTime =
 const getOldestPropertyUpdateTime =
   _getPropTimeByComparison((selected, timestamp) => selected > timestamp)
 
-  const countPropertyUpdates = (record) => {
-    if (!record.updates || !record.updates.properties) {
-      return 0;
-    }
-  
-    const allTimestamps = Object.values(record.updates.properties)
-      .reduce((timestamps, updates) => {
-        updates.forEach(update => timestamps.push(update.timestamp));
-        return timestamps;
-      }, []);
-  
-    const uniqueTimestamps = new Set(allTimestamps);
-    return uniqueTimestamps.size;
-  };
-  
+const countUniqueUpdates = (record) => {
+  if (!record.updates || !record.updates.properties) {
+    return 0;
+  }
+
+  const timestamps = [];
+
+  // Misalkan state.record.updates memiliki struktur yang berisi owners, custodians, dll.
+  if (record.updates.owners) {
+    timestamps.push(...record.updates.owners.map(update => update.timestamp));
+  }
+  if (record.updates.custodians) {
+    timestamps.push(...record.updates.custodians.map(update => update.timestamp));
+  }
+  const locationTimestamps = getPropertyUpdates(record)
+    .filter(update => update.propertyName === 'lokasi')
+    .map(update => update.timestamp);
+
+  const priceTimestamps = getPropertyUpdates(record)
+    .filter(update => update.propertyName === 'harga')
+    .map(update => update.timestamp);
+
+  timestamps.push(...locationTimestamps);
+  timestamps.push(...priceTimestamps);
+
+  const uniqueTimestamps = new Set(timestamps);
+  const totalUniqueUpdates = uniqueTimestamps.size;
+
+
+  console.log('uniqueTimestamps: ', uniqueTimestamps);
+  return totalUniqueUpdates;
+};
+
 const getPropertyUpdates = (record) => {
   const updatesList = [];
 
@@ -78,6 +96,6 @@ module.exports = {
   isReporter,
   getLatestPropertyUpdateTime,
   getOldestPropertyUpdateTime,
-  countPropertyUpdates,
+  countUniqueUpdates,
   getPropertyUpdates
 }

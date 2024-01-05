@@ -13,7 +13,6 @@ const TransferOwnership = {
         vnode.state.record = null;
         vnode.state.agents = [];
         vnode.state.selectedAgent = null;
-        vnode.state.tgltransaksi = moment().format('YYYY-MM-DDTHH:mm');
         vnode.state.harga = '';
 
         // Load the record and agents
@@ -24,22 +23,19 @@ const TransferOwnership = {
             vnode.state.record = record;
             vnode.state.agents = agents.filter(agent => agent.key !== record.owner);
             vnode.state.harga = parseInt(getPropertyValue(record, 'harga', 0)).toLocaleString('id');
+            // Set the initial selected agent if agents are available
+            if (vnode.state.agents.length > 0) {
+                vnode.state.selectedAgent = vnode.state.agents[0].key;
+            } else {
+                // Handle the case where no agents are available
+                vnode.state.selectedAgent = 'Tidak ada Agent yang tersedia'; // or set to null or any other default value
+            }
         });
     },
 
     view: (vnode) => {
         return m('.transfer-ownership',
             m('h2', `Penjualan ${vnode.attrs.recordId}`),
-            m('.form-group',
-                m('label', 'Tanggal Transaksi:'),
-                m('input.form-control', {
-                    type: 'datetime-local',
-                    value: vnode.state.tgltransaksi,
-                    onchange: m.withAttr('value', value => {
-                        vnode.state.tgltransaksi = value;
-                    })
-                })
-            ),
             m('.form-group',
                 m('label', 'Pilih Pembeli:'),
                 m('select.form-control', {
@@ -70,8 +66,6 @@ const TransferOwnership = {
 }
 
 const _submitTransfer = (vnode) => {
-    const timestamp = new Date(vnode.state.tgltransaksi).getTime();
-
     const harga = parsing.toInt(vnode.state.harga.replace(/[^0-9]/g, ''));
 
     const transferPayload = payloads.createProposal({
@@ -79,7 +73,6 @@ const _submitTransfer = (vnode) => {
         receivingAgent: vnode.state.selectedAgent,
         role: payloads.createProposal.enum.OWNER,
         properties: [
-            { name: 'tgltransaksi', intValue: timestamp },
             { name: 'harga', intValue: harga }
         ]
     });

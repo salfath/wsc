@@ -10,7 +10,7 @@
         {
           "name": "tgltransaksi",
           "dataType": 2,
-          "required": true
+          "required": false
         },
         {
           "name": "berat",
@@ -34,7 +34,9 @@
         },
         {
           "name": "shock",
-          "dataType": 1
+          "dataType": 1,
+          "required": false
+
         }
     ]
   }

@@ -68,8 +68,6 @@ const countUniqueUpdates = (record) => {
   const uniqueTimestamps = new Set(timestamps);
   const totalUniqueUpdates = uniqueTimestamps.size;
 
-
-  console.log('uniqueTimestamps: ', uniqueTimestamps);
   return totalUniqueUpdates;
 };
 

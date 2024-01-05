@@ -184,7 +184,11 @@ const MapWidget = {
             map: vnode.state.map,
             path: coordinates,
             geodesic: true,
-            strokeColor: '#FF0000'
+            strokeColor: '#FF0000',
+            icons: [{
+              icon: { path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW },
+              offset: '100%', // places the arrow at the end of the line
+            }]
           })
 
           vnode.state.bounds = new google.maps.LatLngBounds()

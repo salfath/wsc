@@ -187,7 +187,7 @@
       "publicKey": "02c0d076f5b30e16b56d468e4f4da4be0c1ce29370b9ab850cc4a7aec0bf4dbebc",
       "name": "Starbuck",
       "email": "starbuck@pequod.net",
-      "privateKey": "a053435ccb852cbe0bbc1b9e6412d0393c71c367a1a4920fd5697e392e470ee0",
+      "privateKey": "855b85ba566a3a7ef48a92938bc2861bf966066c67d1c1f804bf619e4fe77976",
       "encryptedKey": "{\"iv\":\"zzLQ+X5SdKRF5uAZFGcy1A==\",\"v\":1,\"iter\":10000,\"ks\":128,\"ts\":64,\"mode\":\"ccm\",\"adata\":\"\",\"cipher\":\"aes\",\"salt\":\"/TZy27IbJ/g=\",\"ct\":\"7vV+E3zUdgt0Qp5IPfLPQuslPQoznYAmnGCHt1NFesn1xAuDJYpl6qiP37DCJuDuWgnZvyoJ7BzxZwNzylFwwqLZVjTgXpOu\"}",
       "hashedPassword": "jQwngNSrwaQPvjbGYYPXKrxuwUzPZXG1tRL2h6cfpco="
     }

@@ -15,7 +15,16 @@ const { Table, PagingButtons } = require('../components/tables')
 const PAGE_SIZE = 50
 
 const withIntVal = fn => m.withAttr('value', v => fn(parsing.toInt(v)))
+const withFloatVal = fn => m.withAttr('value', v => fn(parseFloat(v)))
 
+/**
+ * Create a form group (this is a styled form-group with a label).
+ */
+const _formGroup = (label, formEl) =>
+  m('.form-group',
+    m('label', label),
+    formEl)
+    
 const typedWidget = state => {
   const property = _.get(state, 'property', {})
 
@@ -65,7 +74,7 @@ const updateSubmitter = state => e => {
   const update = { name };
   update.dataType = payloads.updateProperties.enum[dataType];
   update[`${dataType.toLowerCase()}Value`] = value;
-
+  console.log('Update: ',update);
   const payload = payloads.updateProperties({
     recordId,
     properties: [update]
@@ -90,18 +99,31 @@ const typedInput = state => {
 
   if (dataType === 'LOCATION') {
     return [
-      m('.col.md-4.mr-1',
-        m('input.form-control', {
-          value: state.tmp.latitude,
-          oninput: withFloatVal(value => { state.tmp.latitude = value })
+      layout.row([
+        _formGroup('Garis Lintang', m('input.form-control', {
+          type: 'number',
+          step: 'any',
+          min: -90,
+          max: 90,
+          value: vnode.state.latitude,
+          oninput: m.withAttr('value', (value) => {
+            vnode.state.latitude = value
+          }),
         })),
-      m('.col.md-4',
-        m('input.form-control', {
-          value: state.tmp.longitude,
-          oninput: withFloatVal(value => { state.tmp.longitude = value })
+        _formGroup('Garis Bujur', m('input.form-control', {
+          type: 'number',
+          step: 'any',
+          min: -180,
+          max: 180,
+          value: vnode.state.longitude,
+          oninput: m.withAttr('value', (value) => {
+            vnode.state.longitude = value
+          }),
         }))
+      ]),
     ];
   }
+  console.log('Location: ',state.latitude,state.longitude)
 
   if (name === 'harga') {
     return m('.col.md-8',
@@ -168,27 +190,23 @@ const updateForm = state => {
 const PropertyDetailPage = {
   oninit (vnode) {
     vnode.state.currentPage = 0
-    vnode.state.tmp = {}
 
     // Method to get current location
-    const getCurrentLocation = () => {
-      if ('geolocation' in navigator) {
-        navigator.geolocation.getCurrentPosition((position) => {
-          vnode.state.tmp.latitude = position.coords.latitude.toFixed(6);
-          vnode.state.tmp.longitude = position.coords.longitude.toFixed(6);
-          m.redraw();
-        }, (error) => {
-          console.error('Error getting location:', error);
-          vnode.state.tmp.latitude = '';
-          vnode.state.tmp.longitude = '';
-        });
-      } else {
-        console.error('Geolocation is not supported by this browser.');
-      }
-    };
-
-    // Get the current location
-    getCurrentLocation();
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(position => {
+        vnode.state.latitude = position.coords.latitude;
+        vnode.state.longitude = position.coords.longitude;
+        m.redraw(); // Memaksa update pada komponen setelah mendapatkan lokasi
+      }, () => {
+        console.error("Geolocation error or permission denied");
+        // Handle error atau kasus ketika izin tidak diberikan
+        m.redraw(); // Memaksa update pada komponen jika ada error
+      });
+    } else {
+      console.error("Geolocation is not supported by this browser");
+      // Handle kasus ketika geolocation tidak didukung
+      m.redraw(); // Memaksa update pada komponen jika geolocation tidak didukung
+    }
 
     const refresh = () => {
       api.get(`records/${vnode.attrs.recordId}/${vnode.attrs.name}`)

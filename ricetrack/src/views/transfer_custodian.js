@@ -16,7 +16,6 @@ const TransferCustodian = {
         vnode.state.selectedAgent = null;
         vnode.state.custodian = '';
         vnode.state.proposals = [];
-        vnode.state.tgltransaksi = moment().format('YYYY-MM-DDTHH:mm');
         vnode.state.publicKey = api.getPublicKey();
 
         await _loadData(vnode.attrs.recordId, vnode.state);
@@ -30,11 +29,6 @@ const TransferCustodian = {
     view: (vnode) => {
 
         const publicKey = vnode.state.publicKey;
-        console.log('Public Key: ', publicKey);
-        console.log('Record: ', vnode.state.record);
-        console.log('Proposals: ', vnode.state.proposals);
-        console.log('Record ID: ', vnode.attrs.recordId);
-        console.log('Selected Agent: ', vnode.state.selectedAgent);
         let proposalsToAnswer = vnode.state.proposals.filter(proposal =>
             (proposal.issuingAgent === publicKey) && (proposal.role.toLowerCase() === 'custodian'));
         let showNewCustodianForm = proposalsToAnswer.length === 0;
@@ -105,14 +99,11 @@ const TransferCustodian = {
 }
 
 const _submitTransfer = async (vnode) => {
-    const timestamp = new Date(vnode.state.tgltransaksi).getTime();
-
     const transferPayload = payloads.createProposal({
         recordId: vnode.state.record.recordId,
         receivingAgent: vnode.state.selectedAgent,
         role: payloads.createProposal.enum.CUSTODIAN,
     });
-    // properties: [{ name: 'tgltransaksi', intValue: timestamp },]
     try {
         await transactions.submit([transferPayload], true);
         console.log('Successfully submitted transfer proposal');

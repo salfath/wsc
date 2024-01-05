@@ -84,25 +84,24 @@ const RiceDetail = {
 const _displayRecordDetails = (record, owner, custodian) => {
     return [
         _row(
-            _labelProperty('Created', formatTimestamp(record.creationTime)),
-            _labelProperty('Updated', formatTimestamp(record.updatedTime))
+            _labelProperty('Tanggal Produksi', formatTimestamp(record.creationTime)),
+            _labelProperty('Tanggal Perubahan', formatTimestamp(record.updatedTime))
         ),
         _row(
             _labelProperty('Pemilik', _agentLink(owner)),
             _labelProperty('Kustodian', _agentLink(custodian))
         ),
         _row(
-            _labelProperty('Tanggal Transaksi Terakhir', formatDateTime(getPropertyValue(record, 'tgltransaksi', 0))),
+            _labelProperty('Berat (kg)', getPropertyValue(record, 'berat', 0)),
             _labelProperty('Kedaluwarsa', formatDate(getPropertyValue(record, 'kedaluwarsa', 0)))
         ),
         _row(
             _labelProperty('Varietas', getPropertyValue(record, 'varietas')),
-            _labelProperty('Berat (kg)', getPropertyValue(record, 'berat', 0))
+            _labelProperty('Harga', formatCurrency(getPropertyValue(record, 'harga')))
+
         ),
         _row(
-            _labelProperty('Harga', formatCurrency(getPropertyValue(record, 'harga'))),
             _labelProperty('Lokasi', _propLink(record, 'lokasi', formatLocation(getPropertyValue(record, 'lokasi'))))
-
         )
     ];
 };
@@ -115,7 +114,7 @@ const _displayInteractionButtons = (record, publicKey, isOwner, isCustodian, vno
                 m('button.btn.btn-primary', { onclick: () => m.route.set(`/rice-updates/${record.recordId}`) }, 'Lacak'),
                 isOwner && !record.final && m('button.btn.btn-primary', { onclick: () => m.route.set(`/transfer-ownership/${record.recordId}`) }, 'Jual'),
                 isCustodian && !record.final && m('button.btn.btn-primary', { onclick: () => m.route.set(`/transfer-custodian/${record.recordId}`) }, 'Ubah Kustodian'),
-                isOwner && !record.final && m('button.btn.btn-primary', { onclick: () => m.route.set(`/manage-reporters/${record.recordId}`) }, 'Kelola Reporter'),
+                isOwner  && !record.final && m('button.btn.btn-primary', { onclick: () => m.route.set(`/manage-reporters/${record.recordId}`) }, 'Kelola Reporter'),
                 isOwner && !record.final && m('button.btn.btn-primary', { onclick: () => _finalizeWithConfirmation(vnode) }, 'Finalisasi')
             ]));
 };

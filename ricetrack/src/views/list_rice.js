@@ -1,21 +1,20 @@
-
 'use strict'
 
 const m = require('mithril')
 const truncate = require('lodash/truncate')
-const {Table, FilterGroup, PagingButtons} = require('../components/tables')
+const { Table, FilterGroup, PagingButtons } = require('../components/tables')
 const api = require('../services/api')
 const { formatTimestamp } = require('../services/parsing')
-const {getPropertyValue, getLatestPropertyUpdateTime, getOldestPropertyUpdateTime, countPropertyUpdates} = require('../utils/records')
+const { getPropertyValue, getLatestPropertyUpdateTime, getOldestPropertyUpdateTime, countUniqueUpdates } = require('../utils/records')
 
 const PAGE_SIZE = 50
 
 const RiceList = {
-  oninit (vnode) {
+  oninit(vnode) {
     vnode.state.records = []
     vnode.state.filteredRecords = []
-
     vnode.state.currentPage = 0
+    vnode.state.currentFilter = (record) => true;
 
     const refresh = () => {
       api.get('records?recordType=rice').then((records) => {
@@ -23,7 +22,7 @@ const RiceList = {
         vnode.state.records.sort((a, b) => {
           return getLatestPropertyUpdateTime(b) - getLatestPropertyUpdateTime(a)
         })
-        vnode.state.filteredRecords = vnode.state.records
+        vnode.state.filteredRecords = vnode.state.records.filter(vnode.state.currentFilter); // Modified line
       })
         .then(() => { vnode.state.refreshId = setTimeout(refresh, 2000) })
     }
@@ -31,18 +30,18 @@ const RiceList = {
     refresh()
   },
 
-  onbeforeremove (vnode) {
+  onbeforeremove(vnode) {
     clearTimeout(vnode.state.refreshId)
   },
 
-  view (vnode) {
+  view(vnode) {
     let publicKey = api.getPublicKey()
-    
+
     return [
       m('.rice-table',
         m('.row.btn-row.mb-2', _controlButtons(vnode, publicKey)),
         m('table', [
-          m('thead', 
+          m('thead',
             m('tr', [
               m('th', 'Nomor Seri'),
               m('th', 'Varietas'),
@@ -51,17 +50,17 @@ const RiceList = {
               m('th', 'Perubahan')
             ])
           ),
-          m('tbody', 
+          m('tbody',
             vnode.state.filteredRecords.slice(
               vnode.state.currentPage * PAGE_SIZE,
               (vnode.state.currentPage + 1) * PAGE_SIZE
-            ).map((rec) => 
+            ).map((rec) =>
               m('tr', [
                 m('td', m(`a[href=/rice/${rec.recordId}]`, { oncreate: m.route.link }, truncate(rec.recordId, { length: 32 }))),
                 m('td', getPropertyValue(rec, 'varietas')),
                 m('td', formatTimestamp(getOldestPropertyUpdateTime(rec))),
                 m('td', formatTimestamp(getLatestPropertyUpdateTime(rec))),
-                m('td', m(`a[href=/rice-updates/${rec.recordId}]`, { oncreate: m.route.link }, countPropertyUpdates(rec).toString()))
+                m('td', m(`a[href=/rice-updates/${rec.recordId}]`, { oncreate: m.route.link }, countUniqueUpdates(rec).toString()))
               ])
             )
           )
@@ -72,17 +71,21 @@ const RiceList = {
 }
 
 const _controlButtons = (vnode, publicKey) => {
-  if (publicKey) {
-    let filterRecords = (f) => {
-      vnode.state.filteredRecords = vnode.state.records.filter(f)
-    }
+  let filterRecords = (f) => {
+    vnode.state.currentFilter = f; // Modified line
+    vnode.state.filteredRecords = vnode.state.records.filter(f)
+  }
 
+  if (publicKey) {
     return [
       m('.col-sm-8',
         m(FilterGroup, {
           ariaLabel: 'Filter Based on Ownership',
           filters: {
-            'All': () => { vnode.state.filteredRecords = vnode.state.records },
+            'All': () => {
+              vnode.state.currentFilter = (record) => true; // Modified line
+              vnode.state.filteredRecords = vnode.state.records
+            },
             'Owned': () => filterRecords((record) => record.owner === publicKey),
             'Custodian': () => filterRecords((record) => record.custodian === publicKey),
             'Reporting': () => filterRecords(

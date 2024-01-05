@@ -86,24 +86,21 @@ const updateSubmitter = state => e => {
 
 // Produces custom input fields for location, harga, and shock
 const typedInput = state => {
-  const { dataType, name } = state.property
+  const { dataType, name } = state.property;
 
   if (dataType === 'LOCATION') {
-    
     return [
       m('.col.md-4.mr-1',
         m('input.form-control', {
-          // placeholder: 'Enter Latitude...',
           value: state.tmp.latitude,
-          oninput: withIntVal(value => { state.tmp.latitude = value })
+          oninput: withFloatVal(value => { state.tmp.latitude = value })
         })),
       m('.col.md-4',
         m('input.form-control', {
-          //placeholder: 'Enter Longitude...',
           value: state.tmp.longitude,
-          oninput: withIntVal(value => { state.tmp.longitude = value })
+          oninput: withFloatVal(value => { state.tmp.longitude = value })
         }))
-    ]
+    ];
   }
 
   if (name === 'harga') {

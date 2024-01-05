@@ -15,7 +15,6 @@ const { Table, PagingButtons } = require('../components/tables')
 const PAGE_SIZE = 50
 
 const withIntVal = fn => m.withAttr('value', v => fn(parsing.toInt(v)))
-const withFloatVal = fn => m.withAttr('value', v => fn(parseFloat(v)))
 
 /**
  * Create a form group (this is a styled form-group with a label).
@@ -64,8 +63,8 @@ const updateSubmitter = state => e => {
   } else if (dataType === 'LOCATION') {
     // Convert latitude and longitude to millionths for LOCATION dataType
     value = {
-      latitude: parseInt(state.tmp.latitude * 1000000, 10),
-      longitude: parseInt(state.tmp.longitude * 1000000, 10)
+      latitude: parseInt(state.latitude * 1000000, 10),
+      longitude: parseInt(state.longitude * 1000000, 10)
     };
   } else {
     value = state.tmp;
@@ -105,9 +104,9 @@ const typedInput = state => {
           step: 'any',
           min: -90,
           max: 90,
-          value: vnode.state.latitude,
+          value: state.latitude,
           oninput: m.withAttr('value', (value) => {
-            vnode.state.latitude = value
+            state.latitude = value
           }),
         })),
         _formGroup('Garis Bujur', m('input.form-control', {
@@ -115,9 +114,9 @@ const typedInput = state => {
           step: 'any',
           min: -180,
           max: 180,
-          value: vnode.state.longitude,
+          value: state.longitude,
           oninput: m.withAttr('value', (value) => {
-            vnode.state.longitude = value
+            state.longitude = value
           }),
         }))
       ]),

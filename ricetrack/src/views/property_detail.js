@@ -16,14 +16,11 @@ const PAGE_SIZE = 50
 
 const withIntVal = fn => m.withAttr('value', v => fn(parsing.toInt(v)))
 
-/**
- * Create a form group (this is a styled form-group with a label).
- */
 const _formGroup = (label, formEl) =>
   m('.form-group',
     m('label', label),
     formEl)
-    
+
 const typedWidget = state => {
   const property = _.get(state, 'property', {})
 
@@ -63,8 +60,8 @@ const updateSubmitter = state => e => {
   } else if (dataType === 'LOCATION') {
     // Convert latitude and longitude to millionths for LOCATION dataType
     value = {
-      latitude: parseInt(state.latitude * 1000000, 10),
-      longitude: parseInt(state.longitude * 1000000, 10)
+      latitude: parseInt(state.tmp.latitude * 1000000, 10),
+      longitude: parseInt(state.tmp.longitude * 1000000, 10)
     };
   } else {
     value = state.tmp;
@@ -73,7 +70,7 @@ const updateSubmitter = state => e => {
   const update = { name };
   update.dataType = payloads.updateProperties.enum[dataType];
   update[`${dataType.toLowerCase()}Value`] = value;
-  console.log('Update: ',update);
+
   const payload = payloads.updateProperties({
     recordId,
     properties: [update]
@@ -94,9 +91,10 @@ const updateSubmitter = state => e => {
 
 // Produces custom input fields for location, harga, and shock
 const typedInput = state => {
-  const { dataType, name } = state.property;
+  const { dataType, name } = state.property
 
   if (dataType === 'LOCATION') {
+    
     return [
       layout.row([
         _formGroup('Garis Lintang', m('input.form-control', {
@@ -104,9 +102,9 @@ const typedInput = state => {
           step: 'any',
           min: -90,
           max: 90,
-          value: state.latitude,
+          value: state.tmp.latitude,
           oninput: m.withAttr('value', (value) => {
-            state.latitude = value
+            state.tmp.latitude = value
           }),
         })),
         _formGroup('Garis Bujur', m('input.form-control', {
@@ -114,15 +112,14 @@ const typedInput = state => {
           step: 'any',
           min: -180,
           max: 180,
-          value: state.longitude,
+          value: state.tmp.longitude,
           oninput: m.withAttr('value', (value) => {
-            state.longitude = value
+            state.tmp.longitude = value
           }),
         }))
       ]),
-    ];
+    ]
   }
-  console.log('Location: ',state.latitude,state.longitude)
 
   if (name === 'harga') {
     return m('.col.md-8',
@@ -189,23 +186,27 @@ const updateForm = state => {
 const PropertyDetailPage = {
   oninit (vnode) {
     vnode.state.currentPage = 0
+    vnode.state.tmp = {}
 
     // Method to get current location
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(position => {
-        vnode.state.latitude = position.coords.latitude;
-        vnode.state.longitude = position.coords.longitude;
-        m.redraw(); // Memaksa update pada komponen setelah mendapatkan lokasi
-      }, () => {
-        console.error("Geolocation error or permission denied");
-        // Handle error atau kasus ketika izin tidak diberikan
-        m.redraw(); // Memaksa update pada komponen jika ada error
-      });
-    } else {
-      console.error("Geolocation is not supported by this browser");
-      // Handle kasus ketika geolocation tidak didukung
-      m.redraw(); // Memaksa update pada komponen jika geolocation tidak didukung
-    }
+    const getCurrentLocation = () => {
+      if ('geolocation' in navigator) {
+        navigator.geolocation.getCurrentPosition((position) => {
+          vnode.state.tmp.latitude = position.coords.latitude;
+          vnode.state.tmp.longitude = position.coords.longitude;
+          m.redraw();
+        }, (error) => {
+          console.error('Error getting location:', error);
+          vnode.state.tmp.latitude = '';
+          vnode.state.tmp.longitude = '';
+        });
+      } else {
+        console.error('Geolocation is not supported by this browser.');
+      }
+    };
+
+    // Get the current location
+    getCurrentLocation();
 
     const refresh = () => {
       api.get(`records/${vnode.attrs.recordId}/${vnode.attrs.name}`)

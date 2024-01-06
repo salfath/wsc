@@ -184,10 +184,13 @@ const MapWidget = {
             map: vnode.state.map,
             path: coordinates,
             geodesic: true,
-            strokeColor: '#FF0000',
+            strokeColor: '#0000FF',
             icons: [{
-              icon: { path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW },
-              offset: '100%', // places the arrow at the end of the line
+              icon: {
+                path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
+                rotation: 180
+              },
+              offset: '0%'
             }]
           })
 

@@ -238,8 +238,8 @@ const _handleSubmit = (signingKey, state) => {
       {
         name: 'lokasi',
         locationValue: {
-          latitude: parsing.toInt(state.latitude),
-          longitude: parsing.toInt(state.longitude)
+          latitude: parseInt(state.latitude * 1000000, 10),
+          longitude: parseInt(state.longitude * 1000000, 10)
         },
         dataType: payloads.createRecord.enum.LOCATION
       }

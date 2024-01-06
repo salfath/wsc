@@ -74,6 +74,8 @@ const AddRice = {
                }
              },
              m('legend', 'Tambahkan Beras'),
+             layout.row([
+
              _formGroup('Nomor Seri', m('input.form-control', {
                type: 'text',
                oninput: m.withAttr('value', (value) => {
@@ -94,17 +96,9 @@ const AddRice = {
                   m('option', { value: option }, option)
                 )
               ])
-            ),
+            )]),
 
              layout.row([
-               _formGroup('Tanggal Produksi', m('input.form-control', {
-                 type: 'text',
-                 placeholder: 'DD-MM-YYYY HH:mm',                              
-                 oninput: m.withAttr('value', (value) => {
-                   vnode.state.tgltransaksi = value
-                 }),
-                 value: vnode.state.tgltransaksi
-               })),
                _formGroup('Berat (kg)', m('input.form-control', {
                  type: 'number',
                  step: 'any',
@@ -112,17 +106,16 @@ const AddRice = {
                    vnode.state.berat = value
                  }),
                  value: vnode.state.berat
-               }))
+               })),
+               _formGroup('Harga (Rp)', m('input.form-control', {
+                type: 'text',
+                oninput: m.withAttr('value', (value) => {
+                  vnode.state.harga = formatHargaInput(value);
+                }),
+                value: vnode.state.harga
+              }))
              ]),
              
-             _formGroup('Harga (Rp)', m('input.form-control', {
-              type: 'text',
-              oninput: m.withAttr('value', (value) => {
-                vnode.state.harga = formatHargaInput(value);
-              }),
-              value: vnode.state.harga
-            })),
-
              layout.row([
                _formGroup('Garis Lintang', m('input.form-control', {
                  type: 'number',
@@ -146,38 +139,7 @@ const AddRice = {
                }))
              ]),
 
-             m('.reporters.form-group',
-               m('label', 'Otorisasi Reporters'),
-
-               vnode.state.reporters.map((reporter, i) =>
-                 m('.row.mb-2',
-                   m('.col-sm-8',
-                     m('input.form-control', {
-                       type: 'text',
-                       placeholder: 'Tambahkan Reporter berdasarkan nama atau kunci publik...',
-                       oninput: m.withAttr('value', (value) => {
-                         // clear any previously matched values
-                         vnode.state.reporters[i].reporterKey = null
-                         const reporter = vnode.state.agents.find(agent => {
-                           return agent.name === value || agent.key === value
-                         })
-                         if (reporter) {
-                           vnode.state.reporters[i].reporterKey = reporter.key
-                         }
-                       }),
-                       onblur: () => _updateReporters(vnode, i)
-                     })),
-
-                   m('.col-sm-4',
-                     m(MultiSelect, {
-                       label: 'Pilih izin',
-                       options: authorizableProperties,
-                       selected: reporter.properties,
-                       onchange: (selection) => {
-                         vnode.state.reporters[i].properties = selection
-                       }
-                     }))))),
-
+             
              m('.row.justify-content-end.align-items-end',
                m('col-2',
                  m('button.btn.btn-primary',

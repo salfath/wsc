@@ -16,7 +16,7 @@ const authorizableProperties = [
   ['harga', 'Harga'],
 ]
 
-const varietasOptions = ['IR/Ciherang/Impari', 'Muncul', 'Mentik Wangi', 'IR42', 'Ketan'];
+const varietasOptions = ['Ciherang', 'Muncul', 'Mentik Wangi', 'IR42', 'Ketan'];
 
 /**
  * The Form for tracking a new rice.

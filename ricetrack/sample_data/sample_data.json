@@ -12,12 +12,12 @@
           {
             "name": "tgltransaksi",
             "dataType": 2,
-            "intValue": 1279895874000
+            "intValue": 1279895874
           },
           {
             "name": "kedaluwarsa",
             "dataType": 2,
-            "intValue": 1343037600000
+            "intValue": 1343037600
           },
           {
             "name": "berat",
@@ -56,12 +56,12 @@
           {
             "name": "tgltransaksi",
             "dataType": 2,
-            "intValue": 1406129874000
+            "intValue": 1406129874
           },
           {
             "name": "kedaluwarsa",
             "dataType": 2,
-            "intValue": 1469268000000
+            "intValue": 1469268000
           },
           {
             "name": "berat",
@@ -97,12 +97,12 @@
           {
             "name": "tgltransaksi",
             "dataType": 2,
-            "intValue": 1406111874000
+            "intValue": 1406111874
           },
           {
             "name": "kedaluwarsa",
             "dataType": 2,
-            "intValue": 1469268000000
+            "intValue": 1469268000
           },
           {
             "name": "berat",

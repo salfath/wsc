@@ -35,6 +35,12 @@ if (DATA.indexOf('.json') === -1) {
 const { records, agents } = require(`./${DATA}`)
 let createTxn = null
 
+const addTwoYears = () => {
+  const now = new Date();
+  now.setFullYear(now.getFullYear() + 2); // Add two years
+  return Math.floor(now.getTime() / 1000); // Convert to Unix timestamp
+};
+
 const createProposal = (privateKey, action) => {
   return createTxn(privateKey, encodeTimestampedPayload({
     action: protos.SCPayload.Action.CREATE_PROPOSAL,
@@ -94,15 +100,22 @@ protos.compile()
 
   // Create Records
   .then(() => {
-    console.log('Creating Records . . .')
+    console.log('Creating Records . . .');
     const recordAdditions = records.map(record => {
+      // Update the kedaluwarsa field
+      record.properties.forEach(property => {
+        if (property.name === 'kedaluwarsa') {
+          property.intValue = addTwoYears();
+        }
+      });
+  
       const properties = record.properties.map(property => {
         if (property.dataType === protos.PropertySchema.DataType.LOCATION) {
-          property.locationValue = protos.Location.create(property.locationValue)
+          property.locationValue = protos.Location.create(property.locationValue);
         }
-        return protos.PropertyValue.create(property)
-      })
-
+        return protos.PropertyValue.create(property);
+      });
+  
       return createTxn(agents[record.ownerIndex || 0].privateKey, encodeTimestampedPayload({
         action: protos.SCPayload.Action.CREATE_RECORD,
         createRecord: protos.CreateRecordAction.create({
@@ -110,10 +123,10 @@ protos.compile()
           recordType: record.recordType,
           properties
         })
-      }))
-    })
-
-    return submitTxns(recordAdditions)
+      }));
+    });
+  
+    return submitTxns(recordAdditions);
   })
 /*
   // Transfer Custodianship

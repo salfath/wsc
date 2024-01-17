@@ -29,7 +29,7 @@ const formatTimestamp = (sec) => {
   if (!sec) {
     sec = Date.now() / 1000;
   }
-  return moment.unix(sec).format('YYYY-MM-DD');
+  return moment.unix(sec).format('DD-MM-YYYY');
 };
 
 /**

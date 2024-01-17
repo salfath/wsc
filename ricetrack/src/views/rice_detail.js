@@ -82,6 +82,12 @@ const RiceDetail = {
 };
 
 const _displayRecordDetails = (record, owner, custodian) => {
+    // Hitung tanggal kedaluwarsa (2 tahun setelah tgltransaksi)
+    let kedaluwarsaDate = new Date(record.recordCreationTime)
+    kedaluwarsaDate.setFullYear(kedaluwarsaDate.getFullYear() + 2)
+    // Konversi tanggal kedaluwarsa ke timestamp atau format yang diinginkan
+    const kedaluwarsaTimestamp = kedaluwarsaDate.getTime()
+
     return [
         _row(
             _labelProperty('Tanggal Produksi', formatTimestamp(record.creationTime)),
@@ -93,7 +99,10 @@ const _displayRecordDetails = (record, owner, custodian) => {
         ),
         _row(
             _labelProperty('Berat (kg)', getPropertyValue(record, 'berat', 0)),
-            _labelProperty('Kedaluwarsa', formatDate(getPropertyValue(record, 'kedaluwarsa', 0)))
+            _labelProperty('Kedaluwarsa', formatTimestamp(kedaluwarsaTimestamp))
+
+
+        //    _labelProperty('Kedaluwarsa', formatTimestamp(getPropertyValue(record, 'kedaluwarsa', 0)))
         ),
         _row(
             _labelProperty('Varietas', getPropertyValue(record, 'varietas')),

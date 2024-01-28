@@ -37,8 +37,24 @@ let createTxn = null
 
 const addTwoYears = () => {
   const now = new Date();
-  now.setFullYear(now.getFullYear() + 2); // Add two years
-  return Math.floor(now.getTime() / 1000); // Convert to Unix timestamp
+  const year = now.getFullYear();
+  const month = now.getMonth();
+  const day = now.getDate();
+
+  // Menambahkan dua tahun
+  now.setFullYear(year + 2);
+
+  // Mengatur jam, menit, dan detik ke 0 untuk menghindari perubahan waktu akibat pembulatan atau zona waktu
+  now.setHours(0, 0, 0, 0);
+
+  // Menangani kasus tahun kabisat
+  if (month === 1 && day === 29) { // Februari 29
+    if ((year + 2) % 4 !== 0 || ((year + 2) % 100 === 0 && (year + 2) % 400 !== 0)) {
+      now.setDate(28);
+    }
+  }
+
+  return Math.floor(now.getTime() / 1000); // Mengembalikan Unix timestamp dalam detik
 };
 
 const createProposal = (privateKey, action) => {

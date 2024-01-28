@@ -82,6 +82,7 @@ const RiceDetail = {
 };
 
 const _displayRecordDetails = (record, owner, custodian) => {
+    console.log('Kedaluwarsa int: ', getPropertyValue(record, 'kedaluwarsa', 0))
     return [
         _row(
             _labelProperty('Tanggal Produksi', formatTimestamp(record.creationTime)),

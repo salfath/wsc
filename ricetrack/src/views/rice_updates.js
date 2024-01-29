@@ -47,7 +47,7 @@ const RiceUpdates = {
             m('.tab-menu', _renderTabMenu(vnode)),
             vnode.state.currentTab === 'Semua' && _renderAllTab(vnode.state),
             vnode.state.currentTab === 'Pemilik' && _renderOwnerTab(vnode.state),
-            vnode.state.currentTab === 'Kustodian' && _renderCustodianTab(vnode.state),
+            // vnode.state.currentTab === 'Kustodian' && _renderCustodianTab(vnode.state),
             vnode.state.currentTab === 'Lokasi' && _renderLocationTab(vnode.state.record),
             vnode.state.currentTab === 'Harga' && _renderPriceTab(vnode.state.record),
         ]
@@ -107,7 +107,7 @@ function aggregateUpdates(allUpdates) {
 }
 
 const typeMap = {
-    owner: 'Perubahan Pemilik',
+    owner: 'Penjualan',
     custodian: 'Perubahan Kustodian',
     location: 'Perubahan Lokasi',
     price: 'Perubahan Harga'
@@ -119,7 +119,7 @@ const _renderTabMenu = (vnode) => {
     return m('ul.nav.nav-tabs', [
         m('li.nav-item', m('a.nav-link', { onclick: setTab('Semua'), class: vnode.state.currentTab === 'Semua' ? 'active' : '' }, 'Semua')),
         m('li.nav-item', m('a.nav-link', { onclick: setTab('Pemilik'), class: vnode.state.currentTab === 'Pemilik' ? 'active' : '' }, 'Pemilik')),
-        m('li.nav-item', m('a.nav-link', { onclick: setTab('Kustodian'), class: vnode.state.currentTab === 'Kustodian' ? 'active' : '' }, 'Kustodian')),
+        // m('li.nav-item', m('a.nav-link', { onclick: setTab('Kustodian'), class: vnode.state.currentTab === 'Kustodian' ? 'active' : '' }, 'Kustodian')),
         m('li.nav-item', m('a.nav-link', { onclick: setTab('Lokasi'), class: vnode.state.currentTab === 'Lokasi' ? 'active' : '' }, 'Lokasi')),
         m('li.nav-item', m('a.nav-link', { onclick: setTab('Harga'), class: vnode.state.currentTab === 'Harga' ? 'active' : '' }, 'Harga'))
     ])
@@ -175,8 +175,8 @@ const _renderAllTab = (state) => {
             m('tr', [
                 m('th', 'Tanggal'),
                 m('th', 'Keterangan'),
-                m('th', 'Owner'),
-                m('th', 'Kustodian'),
+                m('th', 'Pemilik'),
+                // m('th', 'Kustodian'),
                 m('th', 'Lokasi'),
                 m('th', 'Harga')
             ])
@@ -187,7 +187,7 @@ const _renderAllTab = (state) => {
                     m('td', formatDateTime(update.timestamp)),
                     m('td', update.type),
                     m('td', _agentByKey(state.agents, update.owner).name),
-                    m('td', _agentByKey(state.agents, update.custodian).name),
+                //    m('td', _agentByKey(state.agents, update.custodian).name),
                     m('td', formatLocation(update.location)),
                     m('td', formatCurrency(update.price))
                 ])

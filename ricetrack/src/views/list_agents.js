@@ -45,11 +45,11 @@ const AgentList = {
         m('.row.btn-row.mb-2', _controlButtons(vnode, publicKey)),
         m(Table, {
           headers: [
-            'Name',
-            'Key',
-            'Owns',
-            'Custodian',
-            'Reports'
+            'Nama',
+            'Kunci Publik',
+            'Memiliki',
+          //  'Custodian',
+            'Melaporkan'
           ],
           rows: vnode.state.filteredAgents.slice(
               vnode.state.currentPage * PAGE_SIZE,
@@ -59,7 +59,7 @@ const AgentList = {
                 truncate(agent.name, { length: 32 })),
               truncate(agent.key, { length: 32 }),
               agent.owns.length,
-              agent.custodian.length,
+            //  agent.custodian.length,
               agent.reports.length
             ]),
           noRowsText: 'No agents found'
@@ -81,15 +81,15 @@ const _controlButtons = (vnode, publicKey) => {
         m(FilterGroup, {
           ariaLabel: 'Filter Based on Ownership',
           filters: {
-            'All': () => { 
+            'Semua': () => { 
               vnode.state.currentFilter = () => true; // Reset filter for "All"
               vnode.state.applyCurrentFilter();
             },
-            'Owners': () => filterAgents(agent => agent.owns.length > 0),
-            'Custodians': () => filterAgents(agent => agent.custodian.length > 0),
-            'Reporters': () => filterAgents(agent => agent.reports.length > 0)
+            'Pemilik': () => filterAgents(agent => agent.owns.length > 0),
+          //  'Custodians': () => filterAgents(agent => agent.custodian.length > 0),
+            'Reporter': () => filterAgents(agent => agent.reports.length > 0)
           },
-          initialFilter: 'All'
+          initialFilter: 'Semua'
         })),
       m('.col-sm-4', _pagingButtons(vnode))
     ]

@@ -82,17 +82,17 @@ const _controlButtons = (vnode, publicKey) => {
         m(FilterGroup, {
           ariaLabel: 'Filter Based on Ownership',
           filters: {
-            'All': () => {
+            'Semua': () => {
               vnode.state.currentFilter = (record) => true; // Modified line
               vnode.state.filteredRecords = vnode.state.records
             },
-            'Owned': () => filterRecords((record) => record.owner === publicKey),
-            'Custodian': () => filterRecords((record) => record.custodian === publicKey),
-            'Reporting': () => filterRecords(
+            'Dimiliki': () => filterRecords((record) => record.owner === publicKey),
+          //  'Custodian': () => filterRecords((record) => record.custodian === publicKey),
+            'Dilaporkan': () => filterRecords(
               (record) => record.properties.reduce(
                 (owned, prop) => owned || prop.reporters.indexOf(publicKey) > -1, false))
           },
-          initialFilter: 'All'
+          initialFilter: 'Semua'
         })),
       m('.col-sm-4', _pagingButtons(vnode))
     ]

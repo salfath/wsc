@@ -229,6 +229,8 @@ const _handleSubmit = (signingKey, state) => {
   // const kedaluwarsaTimestamp = kedaluwarsaDate.getTime()
   const kedaluwarsaTimestamp = addTwoYears()
   const parsedHarga = parseInt(state.harga.replace(/^Rp\./, '').replace(/\./g, ''), 10);
+  const parsedBerat = state.berat ? parseInt(state.berat, 10) : 0;
+  console.log('Berat: ', parsedBerat)
 
   const recordPayload = payloads.createRecord({
     recordId: state.serialNumber,
@@ -251,7 +253,7 @@ const _handleSubmit = (signingKey, state) => {
       },
       {
         name: 'berat',
-        intValue: parsing.toInt(state.berat),
+        intValue: parsedBerat,
         dataType: payloads.createRecord.enum.INT
       },
       {
@@ -278,6 +280,8 @@ const _handleSubmit = (signingKey, state) => {
       role: payloads.createProposal.enum.REPORTER,
       properties: reporter.properties
     }))
+  
+  console.log('Payload: ', recordPayload)
 
   transactions.submit([recordPayload].concat(reporterPayloads), true)
     .then(() => m.route.set(`/rice/${state.serialNumber}`))

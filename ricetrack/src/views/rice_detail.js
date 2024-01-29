@@ -31,10 +31,21 @@ const RiceDetail = {
         const publicKey = api.getPublicKey();
         const isOwner = record.owner === publicKey;
         const isCustodian = record.custodian === publicKey;
-
         // check whether there is a proposal to answer for this user, whether proposal to be an owner, a custodian, or a reporter
         let proposalsToAnswer = record.proposals.filter(proposal => proposal.receivingAgent === publicKey);
+        console.log('Proposals to answer: ', proposalsToAnswer);
+/*
+        // Log untuk mengecek properti dalam proposal
+        console.log('Proposal diterima dengan properti:', proposalsToAnswer.properties);
 
+        // Cari properti harga dalam proposal
+        const hargaProp = proposalsToAnswer.properties.find(prop => prop.name === 'harga');
+        if (hargaProp) {
+            console.log('Harga dalam proposal:', hargaProp.intValue);
+        } else {
+            console.log('Tidak ada harga yang ditetapkan dalam proposal');
+        }
+*/
         return m('.rice-detail',
             m('h3.text-center', record.recordId),
             // Menampilkan proposal yang perlu dijawab

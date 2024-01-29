@@ -76,6 +76,9 @@ const _submitTransfer = (vnode) => {
             { name: 'harga', intValue: harga }
         ]
     });
+    
+    console.log('Mengirim proposal transfer dengan harga:', harga);
+    console.log('Payload transfer:', transferPayload);
 
     transactions.submit([transferPayload], true)
         .then(() => {

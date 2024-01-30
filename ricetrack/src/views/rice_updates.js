@@ -137,13 +137,13 @@ const _renderAllTab = (state) => {
         agentId: update.agentId,
         type: 'owner'
     })) : [];
-
+    /*
     const custodianUpdates = state.record.updates.custodians ? state.record.updates.custodians.map(update => ({
         timestamp: update.timestamp,
         agentId: update.agentId,
         type: 'custodian'
     })) : [];
-
+    */
     const locationUpdates = getPropertyUpdates(state.record)
         .filter(update => update.propertyName === 'lokasi')
         .map(update => {
@@ -163,11 +163,13 @@ const _renderAllTab = (state) => {
 
 
     // Menggabungkan semua updates dan mengurutkan berdasarkan timestamp
-    const allUpdates = [...ownerUpdates, ...custodianUpdates, ...locationUpdates, ...priceUpdates];
-    allUpdates.sort((a, b) => b.timestamp - a.timestamp);
+    const allUpdates = [...ownerUpdates, ...locationUpdates, ...priceUpdates];
+    // allUpdates.sort((a, b) => b.timestamp - a.timestamp);
     console.log('All updates', allUpdates)
 
     const uniqueUpdates = aggregateUpdates(allUpdates);
+    const filteredUpdates = uniqueUpdates.filter(update => update.type !== typeMap.price);
+    filteredUpdates.sort((a, b) => b.timestamp - a.timestamp);
 
     // Render tabel
     return m('table.table.table-striped', [
@@ -182,7 +184,7 @@ const _renderAllTab = (state) => {
             ])
         ),
         m('tbody',
-            uniqueUpdates.map(update =>
+            filteredUpdates.map(update =>
                 m('tr', [
                     m('td', formatDateTime(update.timestamp)),
                     m('td', update.type),

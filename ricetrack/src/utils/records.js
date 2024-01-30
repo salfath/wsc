@@ -47,24 +47,25 @@ const countUniqueUpdates = (record) => {
 
   const timestamps = [];
 
-  // Misalkan state.record.updates memiliki struktur yang berisi owners, custodians, dll.
   if (record.updates.owners) {
     timestamps.push(...record.updates.owners.map(update => update.timestamp));
   }
+  /*
   if (record.updates.custodians) {
     timestamps.push(...record.updates.custodians.map(update => update.timestamp));
   }
+  */
   const locationTimestamps = getPropertyUpdates(record)
     .filter(update => update.propertyName === 'lokasi')
     .map(update => update.timestamp);
-
+    timestamps.push(...locationTimestamps);
+  /*
   const priceTimestamps = getPropertyUpdates(record)
     .filter(update => update.propertyName === 'harga')
     .map(update => update.timestamp);
-
-  timestamps.push(...locationTimestamps);
   timestamps.push(...priceTimestamps);
-
+  */
+ 
   const uniqueTimestamps = new Set(timestamps);
   const totalUniqueUpdates = uniqueTimestamps.size;
 

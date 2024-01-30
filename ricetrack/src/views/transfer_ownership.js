@@ -66,25 +66,45 @@ const TransferOwnership = {
 }
 
 const _submitTransfer = (vnode) => {
-    const harga = parsing.toInt(vnode.state.harga.replace(/[^0-9]/g, ''));
+    const harga = parseInt(vnode.state.harga.replace(/[^0-9]/g, ''), 10);
+    console.log('harga', harga);
+    const recordId = vnode.state.record.recordId;
+    const selectedAgent = vnode.state.selectedAgent;
 
-    const transferPayload = payloads.createProposal({
-        recordId: vnode.state.record.recordId,
-        receivingAgent: vnode.state.selectedAgent,
-        role: payloads.createProposal.enum.OWNER,
-        properties: [
-            { name: 'harga', intValue: harga }
-        ]
+    // Refactored Update Payload
+    const updateHarga = {
+        name: 'harga',
+        dataType: payloads.updateProperties.enum.INT,
+        intValue: harga
+    };
+
+    const updatePayload = payloads.updateProperties({
+        recordId: recordId,
+        properties: [updateHarga]
     });
-    
-    console.log('Mengirim proposal transfer dengan harga:', harga);
-    console.log('Payload transfer:', transferPayload);
 
-    transactions.submit([transferPayload], true)
+    // Submit the updateProperties transaction
+    transactions.submit([updatePayload], true)
         .then(() => {
-            console.log('Successfully submitted transfer proposal');
-            alert('Penjualan sudah dilakukan. Menunggu konfirmasi dari pembeli.');
-            m.route.set('/'); // Redirect after showing the message
+            console.log('Harga updated successfully');
+
+            // Payload for creating a proposal
+            const transferPayload = payloads.createProposal({
+                recordId: recordId,
+                receivingAgent: selectedAgent,
+                role: payloads.createProposal.enum.OWNER
+            });
+
+            // Submit the createProposal transaction
+            return transactions.submit([transferPayload], true);
+        })
+        .then(() => {
+            console.log('Proposal created successfully');
+            alert('Penjualan sudah dilakukan, menunggu konfirmasi dari pembeli.');
+            m.route.set(`/rice/${recordId}`);
+        })
+        .catch(error => {
+            console.error('Failed to update harga or create proposal:', error);
         });
 }
 

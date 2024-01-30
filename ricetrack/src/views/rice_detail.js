@@ -52,19 +52,18 @@ const RiceDetail = {
             proposalsToAnswer.length > 0
                 ? proposalsToAnswer.map(proposal =>
                     m('.proposal-to-answer',
-                        m('p', `${_agentByKey(vnode.state.agents, proposal.issuingAgent).name} meminta Anda menjadi ${proposal.role.toLowerCase()} produk ini.`),
+                        m('p', `${_agentByKey(vnode.state.agents, proposal.issuingAgent).name} menawarkan produk ini kepada anda seharga ${formatCurrency(getPropertyValue(record, 'harga'))}.`),
                         m('button.btn.btn-primary', {
                             onclick: () => {
                                 _answerProposal(record, proposal.receivingAgent, ROLE_TO_ENUM[proposal.role.toLowerCase()], payloads.answerProposal.enum.ACCEPT)
                                     .then(() => {
-                                        return _loadData(record.recordId, vnode.state); // Memuat data terbaru
+                                        return _loadData(record.recordId, vnode.state); 
                                     })
                                     .then(() => {
-                                        m.redraw(); // Memperbarui UI setelah data dimuat
+                                        m.redraw(); 
                                     })
                                     .catch(err => {
                                         console.error('Error while answering proposal:', err);
-                                        // Handle error jika diperlukan
                                     });
                             }
                         }, 'Terima'),
@@ -72,14 +71,13 @@ const RiceDetail = {
                             onclick: () => {
                                 _answerProposal(record, proposal.receivingAgent, ROLE_TO_ENUM[proposal.role.toLowerCase()], payloads.answerProposal.enum.REJECT)
                                     .then(() => {
-                                        return _loadData(record.recordId, vnode.state); // Memuat data terbaru
+                                        return _loadData(record.recordId, vnode.state); 
                                     })
                                     .then(() => {
-                                        m.redraw(); // Memperbarui UI setelah data dimuat
+                                        m.redraw(); 
                                     })
                                     .catch(err => {
                                         console.error('Error while answering proposal:', err);
-                                        // Handle error jika diperlukan
                                     });
                             }
                         }, 'Tolak')
